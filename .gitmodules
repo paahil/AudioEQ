@@ -1,3 +1,6 @@
 [submodule "aquila-src"]
 	path = libs/aquila
 	url = git://github.com/zsiciarz/aquila.git
+[submodule "rtaudio"]
+	path = libs/rtaudio
+	url = https://github.com/thestk/rtaudio.git
