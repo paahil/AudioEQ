@@ -1,0 +1,3 @@
+[submodule "aquila-src"]
+	path = libs/aquila
+	url = git://github.com/zsiciarz/aquila.git
