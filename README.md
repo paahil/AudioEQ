@@ -1,3 +1,4 @@
 # AudioEQ
-Audio equalizer for PC's
+Audio equalizer for PC
+
 Currently developed for Windows computers
