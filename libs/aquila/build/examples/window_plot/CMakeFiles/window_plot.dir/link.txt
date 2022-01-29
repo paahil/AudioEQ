@@ -1,0 +1,3 @@
+"C:\Program Files\CMake\bin\cmake.exe" -E rm -f CMakeFiles\window_plot.dir/objects.a
+C:\msys64\mingw64\bin\ar.exe qc CMakeFiles\window_plot.dir/objects.a @CMakeFiles\window_plot.dir\objects1.rsp
+C:\msys64\mingw64\bin\g++.exe  -std=gnu++0x -Wl,--whole-archive CMakeFiles\window_plot.dir/objects.a -Wl,--no-whole-archive -o window_plot.exe -Wl,--out-implib,libwindow_plot.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\window_plot.dir\linklibs.rsp

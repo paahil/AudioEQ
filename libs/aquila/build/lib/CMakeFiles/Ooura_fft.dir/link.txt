@@ -1,0 +1,2 @@
+C:\msys64\mingw64\bin\ar.exe qc libOoura_fft.a CMakeFiles/Ooura_fft.dir/ooura/fft4g.c.obj
+C:\msys64\mingw64\bin\ranlib.exe libOoura_fft.a

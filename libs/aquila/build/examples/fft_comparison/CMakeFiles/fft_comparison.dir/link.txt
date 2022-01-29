@@ -1,0 +1,3 @@
+"C:\Program Files\CMake\bin\cmake.exe" -E rm -f CMakeFiles\fft_comparison.dir/objects.a
+C:\msys64\mingw64\bin\ar.exe qc CMakeFiles\fft_comparison.dir/objects.a @CMakeFiles\fft_comparison.dir\objects1.rsp
+C:\msys64\mingw64\bin\g++.exe  -std=gnu++0x -Wl,--whole-archive CMakeFiles\fft_comparison.dir/objects.a -Wl,--no-whole-archive -o fft_comparison.exe -Wl,--out-implib,libfft_comparison.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\fft_comparison.dir\linklibs.rsp
