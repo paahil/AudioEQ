@@ -1,8 +1,9 @@
 #include "EQfilters.hpp"
 
 #include "aquila.h"
-
-std::vector<double> LowShelf(std::vector<double> input, double dB) {
+namespace EQ {
+std::vector<double> LowShelf(std::vector<double> input, double dB,
+                             double cofreq) {
   const double gain = std::pow(10, (dB / 20));
   const std::size_t winsize = input.size();
   const std::size_t FS = 44100;
@@ -36,3 +37,4 @@ std::vector<double> LowShelf(std::vector<double> input, double dB) {
   }
   return output;
 }
+}  // namespace EQ

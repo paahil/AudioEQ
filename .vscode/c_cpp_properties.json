@@ -6,7 +6,7 @@
                 "${default}",
                 "${workspaceFolder}/libs/wxWidgets/lib/mswu",
                 "${workspaceFolder}/libs/wxWidgets/include",
-                "${workspaceFolder}/libs/rtaudio/include",
+                "${workspaceFolder}/libs/rtaudio",
                 "${workspaceFolder}/libs/aquila/aquila",
                 "${workspaceFolder}/libs/wxWidgets/lib/mswu"
             ],

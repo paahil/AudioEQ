@@ -8,8 +8,7 @@ AQBUILD := $(BASEDIR)/libs/aquila/build
 AQINCLUDE := $(BASEDIR)/libs/aquila/aquila
 
 RTBUILD := $(BASEDIR)/libs/rtaudio/build
-RTLIB := $(BASEDIR)/libs/rtaudio/build/lib
-RTINCLUDE := $(BASEDIR)/libs/rtaudio/include
+RTINCLUDE := $(BASEDIR)/libs/rtaudio
 
 WXLIB := $(BASEDIR)/libs/wxWidgets/lib
 WXMAIN := $(BASEDIR)/libs/wxWidgets/lib/mswu
@@ -18,11 +17,11 @@ BUILDDIR := build
 OBJDIR := obj
 SRCDIR := src
 WXLDLIBS := -lwxjpeg -lwxexpat -lwxmsw31u_adv -lwxbase31u -lwxbase31u_xml -lwxbase31u_net -lwxmsw31u_core
-LDLIBS := -L$(WXLIB) $(WXLDLIBS) -mwindows -L$(RTLIB) 
+LDLIBS := -L$(WXLIB) $(WXLDLIBS) -mwindows -L$(RTBUILD) -lrtaudio -L$(AQBUILD) -laquila -L$(AQBUILD)/lib -lOoura_fft
 SRCS := $(shell dir  $(subst /,\,$(BASEDIR)/$(SRCDIR)) /s /b | findstr /i .cpp)
 OBJS := $(patsubst $(BASEDIR)/$(SRCDIR)/%.cpp, $(BASEDIR)/$(OBJDIR)/%.o, $(subst \,/,$(SRCS)))
-DESTDLLS := $(patsubst $(AQLIB)/%.dll, $(BASEDIR)/$(BUILDDIR)/%.dll, $(wildcard $(AQLIB)/*.dll))\
-$(patsubst $(RTLIB)/%.dll, $(BASEDIR)/$(BUILDDIR)/%.dll, $(wildcard $(RTLIB)/*.dll))\
+DESTDLLS := $(patsubst $(AQBUILD)/%.dll, $(BASEDIR)/$(BUILDDIR)/%.dll, $(wildcard $(AQBUILD)/*.dll))\
+$(patsubst $(RTBUILD)/%.dll, $(BASEDIR)/$(BUILDDIR)/%.dll, $(wildcard $(RTBUILD)/*.dll))\
 $(patsubst $(WXLIB)/%.dll, $(BASEDIR)/$(BUILDDIR)/%.dll, $(wildcard $(WXLIB)/*.dll))
 all : makelibs makedirs buildexe clean
 
@@ -49,12 +48,13 @@ $(BASEDIR)/$(OBJDIR)/%.o: $(BASEDIR)/$(SRCDIR)/%.cpp
 
 
 copydlls: $(DESTDLLS)
-$(BASEDIR)/$(BUILDDIR)/%.dll : $(AQLIB)/%.dll
-	cd $(AQLIB) && copy /y $(notdir $<) $(subst /,\,$(BASEDIR)/$(BUILDDIR))
+$(BASEDIR)/$(BUILDDIR)/%.dll : $(AQBUILD)/%.dll
+	cd $(AQBUILD) && copy /y $(notdir $<) $(subst /,\,$(BASEDIR)/$(BUILDDIR))
+
 $(BASEDIR)/$(BUILDDIR)/%.dll : $(WXLIB)/%.dll
 	cd $(WXLIB) && copy /y $(notdir $<) $(subst /,\,$(BASEDIR)/$(BUILDDIR))
-$(BASEDIR)/$(BUILDDIR)/%.dll : $(RTLIB)/%.dll
-	cd $(RTLIB) && copy /y $(notdir $<) $(subst /,\,$(BASEDIR)/$(BUILDDIR))
+$(BASEDIR)/$(BUILDDIR)/%.dll : $(RTBUILD)/%.dll
+	cd $(RTBUILD) && copy /y $(notdir $<) $(subst /,\,$(BASEDIR)/$(BUILDDIR))
 
 run:
 	$(BUILDDIR)/$(EXE)
