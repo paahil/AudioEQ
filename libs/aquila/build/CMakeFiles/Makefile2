@@ -502,21 +502,21 @@ CMakeFiles/Aquila.dir/clean:
 CMakeFiles/examples.dir/all: examples/wave_info/CMakeFiles/wave_info.dir/all
 CMakeFiles/examples.dir/all: examples/frame_iteration/CMakeFiles/frame_iteration.dir/all
 CMakeFiles/examples.dir/all: examples/utility_functions/CMakeFiles/utility_functions.dir/all
-CMakeFiles/examples.dir/all: examples/window_plot/CMakeFiles/window_plot.dir/all
 CMakeFiles/examples.dir/all: examples/wave_iteration/CMakeFiles/wave_iteration.dir/all
+CMakeFiles/examples.dir/all: examples/window_plot/CMakeFiles/window_plot.dir/all
 CMakeFiles/examples.dir/all: examples/window_usage/CMakeFiles/window_usage.dir/all
+CMakeFiles/examples.dir/all: examples/text_plot/CMakeFiles/text_plot.dir/all
 CMakeFiles/examples.dir/all: examples/square_generator/CMakeFiles/square_generator.dir/all
 CMakeFiles/examples.dir/all: examples/sine_generator/CMakeFiles/sine_generator.dir/all
-CMakeFiles/examples.dir/all: examples/text_plot/CMakeFiles/text_plot.dir/all
+CMakeFiles/examples.dir/all: examples/am_modulation/CMakeFiles/am_modulation.dir/all
 CMakeFiles/examples.dir/all: examples/triangle_generator/CMakeFiles/triangle_generator.dir/all
 CMakeFiles/examples.dir/all: examples/generators/CMakeFiles/generators.dir/all
-CMakeFiles/examples.dir/all: examples/am_modulation/CMakeFiles/am_modulation.dir/all
 CMakeFiles/examples.dir/all: examples/fft_simple_spectrum/CMakeFiles/fft_simple_spectrum.dir/all
 CMakeFiles/examples.dir/all: examples/fft_comparison/CMakeFiles/fft_comparison.dir/all
 CMakeFiles/examples.dir/all: examples/fft_filter/CMakeFiles/fft_filter.dir/all
 CMakeFiles/examples.dir/all: examples/dtw_path_recovery/CMakeFiles/dtw_path_recovery.dir/all
-CMakeFiles/examples.dir/all: examples/spectrogram/CMakeFiles/spectrogram.dir/all
 CMakeFiles/examples.dir/all: examples/mfcc_calculation/CMakeFiles/mfcc_calculation.dir/all
+CMakeFiles/examples.dir/all: examples/spectrogram/CMakeFiles/spectrogram.dir/all
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\examples.dir\build.make CMakeFiles/examples.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\examples.dir\build.make CMakeFiles/examples.dir/build
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=C:\Ohjelmointi\AudioEQ\libs\aquila\build\CMakeFiles --progress-num= "Built target examples"
@@ -672,8 +672,8 @@ lib/unittestpp/CMakeFiles/check.dir/clean:
 # Target rules for target examples/utility_functions/CMakeFiles/utility_functions.dir
 
 # All Build rule for target.
-examples/utility_functions/CMakeFiles/utility_functions.dir/all: CMakeFiles/Aquila.dir/all
 examples/utility_functions/CMakeFiles/utility_functions.dir/all: lib/CMakeFiles/Ooura_fft.dir/all
+examples/utility_functions/CMakeFiles/utility_functions.dir/all: CMakeFiles/Aquila.dir/all
 	$(MAKE) $(MAKESILENT) -f examples\utility_functions\CMakeFiles\utility_functions.dir\build.make examples/utility_functions/CMakeFiles/utility_functions.dir/depend
 	$(MAKE) $(MAKESILENT) -f examples\utility_functions\CMakeFiles\utility_functions.dir\build.make examples/utility_functions/CMakeFiles/utility_functions.dir/build
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=C:\Ohjelmointi\AudioEQ\libs\aquila\build\CMakeFiles --progress-num=93,94 "Built target utility_functions"
@@ -699,8 +699,8 @@ examples/utility_functions/CMakeFiles/utility_functions.dir/clean:
 # Target rules for target examples/frame_iteration/CMakeFiles/frame_iteration.dir
 
 # All Build rule for target.
-examples/frame_iteration/CMakeFiles/frame_iteration.dir/all: CMakeFiles/Aquila.dir/all
 examples/frame_iteration/CMakeFiles/frame_iteration.dir/all: lib/CMakeFiles/Ooura_fft.dir/all
+examples/frame_iteration/CMakeFiles/frame_iteration.dir/all: CMakeFiles/Aquila.dir/all
 	$(MAKE) $(MAKESILENT) -f examples\frame_iteration\CMakeFiles\frame_iteration.dir\build.make examples/frame_iteration/CMakeFiles/frame_iteration.dir/depend
 	$(MAKE) $(MAKESILENT) -f examples\frame_iteration\CMakeFiles\frame_iteration.dir\build.make examples/frame_iteration/CMakeFiles/frame_iteration.dir/build
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=C:\Ohjelmointi\AudioEQ\libs\aquila\build\CMakeFiles --progress-num=82 "Built target frame_iteration"
@@ -726,8 +726,8 @@ examples/frame_iteration/CMakeFiles/frame_iteration.dir/clean:
 # Target rules for target examples/wave_info/CMakeFiles/wave_info.dir
 
 # All Build rule for target.
-examples/wave_info/CMakeFiles/wave_info.dir/all: CMakeFiles/Aquila.dir/all
 examples/wave_info/CMakeFiles/wave_info.dir/all: lib/CMakeFiles/Ooura_fft.dir/all
+examples/wave_info/CMakeFiles/wave_info.dir/all: CMakeFiles/Aquila.dir/all
 	$(MAKE) $(MAKESILENT) -f examples\wave_info\CMakeFiles\wave_info.dir\build.make examples/wave_info/CMakeFiles/wave_info.dir/depend
 	$(MAKE) $(MAKESILENT) -f examples\wave_info\CMakeFiles\wave_info.dir\build.make examples/wave_info/CMakeFiles/wave_info.dir/build
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=C:\Ohjelmointi\AudioEQ\libs\aquila\build\CMakeFiles --progress-num=95 "Built target wave_info"
@@ -753,8 +753,8 @@ examples/wave_info/CMakeFiles/wave_info.dir/clean:
 # Target rules for target examples/wave_iteration/CMakeFiles/wave_iteration.dir
 
 # All Build rule for target.
-examples/wave_iteration/CMakeFiles/wave_iteration.dir/all: CMakeFiles/Aquila.dir/all
 examples/wave_iteration/CMakeFiles/wave_iteration.dir/all: lib/CMakeFiles/Ooura_fft.dir/all
+examples/wave_iteration/CMakeFiles/wave_iteration.dir/all: CMakeFiles/Aquila.dir/all
 	$(MAKE) $(MAKESILENT) -f examples\wave_iteration\CMakeFiles\wave_iteration.dir\build.make examples/wave_iteration/CMakeFiles/wave_iteration.dir/depend
 	$(MAKE) $(MAKESILENT) -f examples\wave_iteration\CMakeFiles\wave_iteration.dir\build.make examples/wave_iteration/CMakeFiles/wave_iteration.dir/build
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=C:\Ohjelmointi\AudioEQ\libs\aquila\build\CMakeFiles --progress-num=96,97 "Built target wave_iteration"
@@ -780,8 +780,8 @@ examples/wave_iteration/CMakeFiles/wave_iteration.dir/clean:
 # Target rules for target examples/window_plot/CMakeFiles/window_plot.dir
 
 # All Build rule for target.
-examples/window_plot/CMakeFiles/window_plot.dir/all: CMakeFiles/Aquila.dir/all
 examples/window_plot/CMakeFiles/window_plot.dir/all: lib/CMakeFiles/Ooura_fft.dir/all
+examples/window_plot/CMakeFiles/window_plot.dir/all: CMakeFiles/Aquila.dir/all
 	$(MAKE) $(MAKESILENT) -f examples\window_plot\CMakeFiles\window_plot.dir\build.make examples/window_plot/CMakeFiles/window_plot.dir/depend
 	$(MAKE) $(MAKESILENT) -f examples\window_plot\CMakeFiles\window_plot.dir\build.make examples/window_plot/CMakeFiles/window_plot.dir/build
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=C:\Ohjelmointi\AudioEQ\libs\aquila\build\CMakeFiles --progress-num=98 "Built target window_plot"
@@ -807,8 +807,8 @@ examples/window_plot/CMakeFiles/window_plot.dir/clean:
 # Target rules for target examples/window_usage/CMakeFiles/window_usage.dir
 
 # All Build rule for target.
-examples/window_usage/CMakeFiles/window_usage.dir/all: CMakeFiles/Aquila.dir/all
 examples/window_usage/CMakeFiles/window_usage.dir/all: lib/CMakeFiles/Ooura_fft.dir/all
+examples/window_usage/CMakeFiles/window_usage.dir/all: CMakeFiles/Aquila.dir/all
 	$(MAKE) $(MAKESILENT) -f examples\window_usage\CMakeFiles\window_usage.dir\build.make examples/window_usage/CMakeFiles/window_usage.dir/depend
 	$(MAKE) $(MAKESILENT) -f examples\window_usage\CMakeFiles\window_usage.dir\build.make examples/window_usage/CMakeFiles/window_usage.dir/build
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=C:\Ohjelmointi\AudioEQ\libs\aquila\build\CMakeFiles --progress-num=99,100 "Built target window_usage"
@@ -834,8 +834,8 @@ examples/window_usage/CMakeFiles/window_usage.dir/clean:
 # Target rules for target examples/text_plot/CMakeFiles/text_plot.dir
 
 # All Build rule for target.
-examples/text_plot/CMakeFiles/text_plot.dir/all: CMakeFiles/Aquila.dir/all
 examples/text_plot/CMakeFiles/text_plot.dir/all: lib/CMakeFiles/Ooura_fft.dir/all
+examples/text_plot/CMakeFiles/text_plot.dir/all: CMakeFiles/Aquila.dir/all
 	$(MAKE) $(MAKESILENT) -f examples\text_plot\CMakeFiles\text_plot.dir\build.make examples/text_plot/CMakeFiles/text_plot.dir/depend
 	$(MAKE) $(MAKESILENT) -f examples\text_plot\CMakeFiles\text_plot.dir\build.make examples/text_plot/CMakeFiles/text_plot.dir/build
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=C:\Ohjelmointi\AudioEQ\libs\aquila\build\CMakeFiles --progress-num=91 "Built target text_plot"
@@ -861,8 +861,8 @@ examples/text_plot/CMakeFiles/text_plot.dir/clean:
 # Target rules for target examples/sine_generator/CMakeFiles/sine_generator.dir
 
 # All Build rule for target.
-examples/sine_generator/CMakeFiles/sine_generator.dir/all: CMakeFiles/Aquila.dir/all
 examples/sine_generator/CMakeFiles/sine_generator.dir/all: lib/CMakeFiles/Ooura_fft.dir/all
+examples/sine_generator/CMakeFiles/sine_generator.dir/all: CMakeFiles/Aquila.dir/all
 	$(MAKE) $(MAKESILENT) -f examples\sine_generator\CMakeFiles\sine_generator.dir\build.make examples/sine_generator/CMakeFiles/sine_generator.dir/depend
 	$(MAKE) $(MAKESILENT) -f examples\sine_generator\CMakeFiles\sine_generator.dir\build.make examples/sine_generator/CMakeFiles/sine_generator.dir/build
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=C:\Ohjelmointi\AudioEQ\libs\aquila\build\CMakeFiles --progress-num=86,87 "Built target sine_generator"
@@ -888,8 +888,8 @@ examples/sine_generator/CMakeFiles/sine_generator.dir/clean:
 # Target rules for target examples/square_generator/CMakeFiles/square_generator.dir
 
 # All Build rule for target.
-examples/square_generator/CMakeFiles/square_generator.dir/all: CMakeFiles/Aquila.dir/all
 examples/square_generator/CMakeFiles/square_generator.dir/all: lib/CMakeFiles/Ooura_fft.dir/all
+examples/square_generator/CMakeFiles/square_generator.dir/all: CMakeFiles/Aquila.dir/all
 	$(MAKE) $(MAKESILENT) -f examples\square_generator\CMakeFiles\square_generator.dir\build.make examples/square_generator/CMakeFiles/square_generator.dir/depend
 	$(MAKE) $(MAKESILENT) -f examples\square_generator\CMakeFiles\square_generator.dir\build.make examples/square_generator/CMakeFiles/square_generator.dir/build
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=C:\Ohjelmointi\AudioEQ\libs\aquila\build\CMakeFiles --progress-num=89,90 "Built target square_generator"
@@ -915,8 +915,8 @@ examples/square_generator/CMakeFiles/square_generator.dir/clean:
 # Target rules for target examples/triangle_generator/CMakeFiles/triangle_generator.dir
 
 # All Build rule for target.
-examples/triangle_generator/CMakeFiles/triangle_generator.dir/all: CMakeFiles/Aquila.dir/all
 examples/triangle_generator/CMakeFiles/triangle_generator.dir/all: lib/CMakeFiles/Ooura_fft.dir/all
+examples/triangle_generator/CMakeFiles/triangle_generator.dir/all: CMakeFiles/Aquila.dir/all
 	$(MAKE) $(MAKESILENT) -f examples\triangle_generator\CMakeFiles\triangle_generator.dir\build.make examples/triangle_generator/CMakeFiles/triangle_generator.dir/depend
 	$(MAKE) $(MAKESILENT) -f examples\triangle_generator\CMakeFiles\triangle_generator.dir\build.make examples/triangle_generator/CMakeFiles/triangle_generator.dir/build
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=C:\Ohjelmointi\AudioEQ\libs\aquila\build\CMakeFiles --progress-num=92 "Built target triangle_generator"
@@ -942,8 +942,8 @@ examples/triangle_generator/CMakeFiles/triangle_generator.dir/clean:
 # Target rules for target examples/generators/CMakeFiles/generators.dir
 
 # All Build rule for target.
-examples/generators/CMakeFiles/generators.dir/all: CMakeFiles/Aquila.dir/all
 examples/generators/CMakeFiles/generators.dir/all: lib/CMakeFiles/Ooura_fft.dir/all
+examples/generators/CMakeFiles/generators.dir/all: CMakeFiles/Aquila.dir/all
 	$(MAKE) $(MAKESILENT) -f examples\generators\CMakeFiles\generators.dir\build.make examples/generators/CMakeFiles/generators.dir/depend
 	$(MAKE) $(MAKESILENT) -f examples\generators\CMakeFiles\generators.dir\build.make examples/generators/CMakeFiles/generators.dir/build
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=C:\Ohjelmointi\AudioEQ\libs\aquila\build\CMakeFiles --progress-num=83,84 "Built target generators"
@@ -969,8 +969,8 @@ examples/generators/CMakeFiles/generators.dir/clean:
 # Target rules for target examples/am_modulation/CMakeFiles/am_modulation.dir
 
 # All Build rule for target.
-examples/am_modulation/CMakeFiles/am_modulation.dir/all: CMakeFiles/Aquila.dir/all
 examples/am_modulation/CMakeFiles/am_modulation.dir/all: lib/CMakeFiles/Ooura_fft.dir/all
+examples/am_modulation/CMakeFiles/am_modulation.dir/all: CMakeFiles/Aquila.dir/all
 	$(MAKE) $(MAKESILENT) -f examples\am_modulation\CMakeFiles\am_modulation.dir\build.make examples/am_modulation/CMakeFiles/am_modulation.dir/depend
 	$(MAKE) $(MAKESILENT) -f examples\am_modulation\CMakeFiles\am_modulation.dir\build.make examples/am_modulation/CMakeFiles/am_modulation.dir/build
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=C:\Ohjelmointi\AudioEQ\libs\aquila\build\CMakeFiles --progress-num=51,52 "Built target am_modulation"
@@ -996,8 +996,8 @@ examples/am_modulation/CMakeFiles/am_modulation.dir/clean:
 # Target rules for target examples/fft_comparison/CMakeFiles/fft_comparison.dir
 
 # All Build rule for target.
-examples/fft_comparison/CMakeFiles/fft_comparison.dir/all: CMakeFiles/Aquila.dir/all
 examples/fft_comparison/CMakeFiles/fft_comparison.dir/all: lib/CMakeFiles/Ooura_fft.dir/all
+examples/fft_comparison/CMakeFiles/fft_comparison.dir/all: CMakeFiles/Aquila.dir/all
 	$(MAKE) $(MAKESILENT) -f examples\fft_comparison\CMakeFiles\fft_comparison.dir\build.make examples/fft_comparison/CMakeFiles/fft_comparison.dir/depend
 	$(MAKE) $(MAKESILENT) -f examples\fft_comparison\CMakeFiles\fft_comparison.dir\build.make examples/fft_comparison/CMakeFiles/fft_comparison.dir/build
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=C:\Ohjelmointi\AudioEQ\libs\aquila\build\CMakeFiles --progress-num=78 "Built target fft_comparison"
@@ -1023,8 +1023,8 @@ examples/fft_comparison/CMakeFiles/fft_comparison.dir/clean:
 # Target rules for target examples/fft_simple_spectrum/CMakeFiles/fft_simple_spectrum.dir
 
 # All Build rule for target.
-examples/fft_simple_spectrum/CMakeFiles/fft_simple_spectrum.dir/all: CMakeFiles/Aquila.dir/all
 examples/fft_simple_spectrum/CMakeFiles/fft_simple_spectrum.dir/all: lib/CMakeFiles/Ooura_fft.dir/all
+examples/fft_simple_spectrum/CMakeFiles/fft_simple_spectrum.dir/all: CMakeFiles/Aquila.dir/all
 	$(MAKE) $(MAKESILENT) -f examples\fft_simple_spectrum\CMakeFiles\fft_simple_spectrum.dir\build.make examples/fft_simple_spectrum/CMakeFiles/fft_simple_spectrum.dir/depend
 	$(MAKE) $(MAKESILENT) -f examples\fft_simple_spectrum\CMakeFiles\fft_simple_spectrum.dir\build.make examples/fft_simple_spectrum/CMakeFiles/fft_simple_spectrum.dir/build
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=C:\Ohjelmointi\AudioEQ\libs\aquila\build\CMakeFiles --progress-num=81 "Built target fft_simple_spectrum"
@@ -1050,8 +1050,8 @@ examples/fft_simple_spectrum/CMakeFiles/fft_simple_spectrum.dir/clean:
 # Target rules for target examples/fft_filter/CMakeFiles/fft_filter.dir
 
 # All Build rule for target.
-examples/fft_filter/CMakeFiles/fft_filter.dir/all: CMakeFiles/Aquila.dir/all
 examples/fft_filter/CMakeFiles/fft_filter.dir/all: lib/CMakeFiles/Ooura_fft.dir/all
+examples/fft_filter/CMakeFiles/fft_filter.dir/all: CMakeFiles/Aquila.dir/all
 	$(MAKE) $(MAKESILENT) -f examples\fft_filter\CMakeFiles\fft_filter.dir\build.make examples/fft_filter/CMakeFiles/fft_filter.dir/depend
 	$(MAKE) $(MAKESILENT) -f examples\fft_filter\CMakeFiles\fft_filter.dir\build.make examples/fft_filter/CMakeFiles/fft_filter.dir/build
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=C:\Ohjelmointi\AudioEQ\libs\aquila\build\CMakeFiles --progress-num=79,80 "Built target fft_filter"
@@ -1077,8 +1077,8 @@ examples/fft_filter/CMakeFiles/fft_filter.dir/clean:
 # Target rules for target examples/spectrogram/CMakeFiles/spectrogram.dir
 
 # All Build rule for target.
-examples/spectrogram/CMakeFiles/spectrogram.dir/all: CMakeFiles/Aquila.dir/all
 examples/spectrogram/CMakeFiles/spectrogram.dir/all: lib/CMakeFiles/Ooura_fft.dir/all
+examples/spectrogram/CMakeFiles/spectrogram.dir/all: CMakeFiles/Aquila.dir/all
 	$(MAKE) $(MAKESILENT) -f examples\spectrogram\CMakeFiles\spectrogram.dir\build.make examples/spectrogram/CMakeFiles/spectrogram.dir/depend
 	$(MAKE) $(MAKESILENT) -f examples\spectrogram\CMakeFiles\spectrogram.dir\build.make examples/spectrogram/CMakeFiles/spectrogram.dir/build
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=C:\Ohjelmointi\AudioEQ\libs\aquila\build\CMakeFiles --progress-num=88 "Built target spectrogram"
@@ -1104,8 +1104,8 @@ examples/spectrogram/CMakeFiles/spectrogram.dir/clean:
 # Target rules for target examples/mfcc_calculation/CMakeFiles/mfcc_calculation.dir
 
 # All Build rule for target.
-examples/mfcc_calculation/CMakeFiles/mfcc_calculation.dir/all: CMakeFiles/Aquila.dir/all
 examples/mfcc_calculation/CMakeFiles/mfcc_calculation.dir/all: lib/CMakeFiles/Ooura_fft.dir/all
+examples/mfcc_calculation/CMakeFiles/mfcc_calculation.dir/all: CMakeFiles/Aquila.dir/all
 	$(MAKE) $(MAKESILENT) -f examples\mfcc_calculation\CMakeFiles\mfcc_calculation.dir\build.make examples/mfcc_calculation/CMakeFiles/mfcc_calculation.dir/depend
 	$(MAKE) $(MAKESILENT) -f examples\mfcc_calculation\CMakeFiles\mfcc_calculation.dir\build.make examples/mfcc_calculation/CMakeFiles/mfcc_calculation.dir/build
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=C:\Ohjelmointi\AudioEQ\libs\aquila\build\CMakeFiles --progress-num=85 "Built target mfcc_calculation"
@@ -1131,8 +1131,8 @@ examples/mfcc_calculation/CMakeFiles/mfcc_calculation.dir/clean:
 # Target rules for target examples/dtw_path_recovery/CMakeFiles/dtw_path_recovery.dir
 
 # All Build rule for target.
-examples/dtw_path_recovery/CMakeFiles/dtw_path_recovery.dir/all: CMakeFiles/Aquila.dir/all
 examples/dtw_path_recovery/CMakeFiles/dtw_path_recovery.dir/all: lib/CMakeFiles/Ooura_fft.dir/all
+examples/dtw_path_recovery/CMakeFiles/dtw_path_recovery.dir/all: CMakeFiles/Aquila.dir/all
 	$(MAKE) $(MAKESILENT) -f examples\dtw_path_recovery\CMakeFiles\dtw_path_recovery.dir\build.make examples/dtw_path_recovery/CMakeFiles/dtw_path_recovery.dir/depend
 	$(MAKE) $(MAKESILENT) -f examples\dtw_path_recovery\CMakeFiles\dtw_path_recovery.dir\build.make examples/dtw_path_recovery/CMakeFiles/dtw_path_recovery.dir/build
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=C:\Ohjelmointi\AudioEQ\libs\aquila\build\CMakeFiles --progress-num=76,77 "Built target dtw_path_recovery"
@@ -1158,8 +1158,8 @@ examples/dtw_path_recovery/CMakeFiles/dtw_path_recovery.dir/clean:
 # Target rules for target tests/CMakeFiles/aquila_test.dir
 
 # All Build rule for target.
-tests/CMakeFiles/aquila_test.dir/all: CMakeFiles/Aquila.dir/all
 tests/CMakeFiles/aquila_test.dir/all: lib/CMakeFiles/Ooura_fft.dir/all
+tests/CMakeFiles/aquila_test.dir/all: CMakeFiles/Aquila.dir/all
 tests/CMakeFiles/aquila_test.dir/all: lib/unittestpp/CMakeFiles/UnitTest++.dir/all
 	$(MAKE) $(MAKESILENT) -f tests\CMakeFiles\aquila_test.dir\build.make tests/CMakeFiles/aquila_test.dir/depend
 	$(MAKE) $(MAKESILENT) -f tests\CMakeFiles\aquila_test.dir\build.make tests/CMakeFiles/aquila_test.dir/build
