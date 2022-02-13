@@ -7,11 +7,9 @@ class EQFrame : public wxFrame {
   EQFrame();
 
  private:
-  void OnHello(wxCommandEvent& event);
-  void OnExit(wxCommandEvent& event);
-  void OnAbout(wxCommandEvent& event);
+  void OnEnable(wxCommandEvent& event);
 };
-enum { ID_Hello = 1 };
+enum { ID_Enable = 1, ID_In = 2, ID_Out = 3 };
 class EQApp : public wxApp {
  public:
   virtual bool OnInit();
