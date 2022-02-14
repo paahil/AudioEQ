@@ -37,6 +37,13 @@ EQFrame::EQFrame() : wxFrame(NULL, wxID_ANY, "AudioEQ") {
   topsizer->Add(devsizer);
 
   wxBoxSizer* cntrsizer = new wxBoxSizer(wxHORIZONTAL);
+  for (int j = 0; j < Controls.filternum; j++) {
+    wxSlider* slider = new wxSlider(
+        panel, ID_Out + 1 + j, 0, -25, 25, wxDefaultPosition, wxSize(100, 300),
+        wxSL_VERTICAL | wxSL_AUTOTICKS | wxSL_LABELS);
+    cntrsizer->Add(slider);
+  }
+  topsizer->Add(cntrsizer, wxEXPAND);
 
   panel->SetSizer(topsizer);
   SetSizer(framesizer);
