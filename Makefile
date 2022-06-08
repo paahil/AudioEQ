@@ -10,8 +10,9 @@ AQINCLUDE := $(BASEDIR)/libs/aquila/aquila
 RTBUILD := $(BASEDIR)/libs/rtaudio/build
 RTINCLUDE := $(BASEDIR)/libs/rtaudio
 
-WXLIB := $(BASEDIR)/libs/wxWidgets/lib
-WXMAIN := $(BASEDIR)/libs/wxWidgets/lib/mswu
+WXLIB := $(BASEDIR)/libs/wxWidgets/lib/gcc_dll
+WXBUILD := $(BASEDIR)/libs/wxWidgets/build
+WXMAIN := $(WXLIB)/mswu
 WXINCLUDE := $(BASEDIR)/libs/wxWidgets/include
 BUILDDIR := build
 OBJDIR := obj
@@ -30,6 +31,7 @@ makelibs:
 	cmake -S $(BASEDIR)/libs/rtaudio -B $(RTBUILD)  -G"MinGW Makefiles"
 	cd $(AQBUILD) && $(MAKE)
 	cd $(RTBUILD) && $(MAKE)
+	cd $(WXBUILD)/msw && $(MAKE) -f makefile.gcc BUILD=release SHARED=1
 
 makedirs:
 	if not exist $(BUILDDIR) mkdir $(BUILDDIR)

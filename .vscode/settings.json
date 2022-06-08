@@ -72,7 +72,8 @@
         "semaphore": "cpp",
         "stop_token": "cpp",
         "thread": "cpp",
-        "*.ipp": "cpp"
+        "*.ipp": "cpp",
+        "cfenv": "cpp"
     },
     "idf.espIdfPathWin": "C:/Espressif/frameworks/esp-idf-v4.4/",
     "idf.pythonBinPathWin": "C:/Ohjelmointi/Espressif/python_env/idf4.4_py3.8_env/Scripts/python.exe",

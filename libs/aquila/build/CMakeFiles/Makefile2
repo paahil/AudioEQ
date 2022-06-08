@@ -503,20 +503,20 @@ CMakeFiles/examples.dir/all: examples/utility_functions/CMakeFiles/utility_funct
 CMakeFiles/examples.dir/all: examples/frame_iteration/CMakeFiles/frame_iteration.dir/all
 CMakeFiles/examples.dir/all: examples/wave_info/CMakeFiles/wave_info.dir/all
 CMakeFiles/examples.dir/all: examples/window_plot/CMakeFiles/window_plot.dir/all
-CMakeFiles/examples.dir/all: examples/wave_iteration/CMakeFiles/wave_iteration.dir/all
 CMakeFiles/examples.dir/all: examples/window_usage/CMakeFiles/window_usage.dir/all
-CMakeFiles/examples.dir/all: examples/sine_generator/CMakeFiles/sine_generator.dir/all
+CMakeFiles/examples.dir/all: examples/wave_iteration/CMakeFiles/wave_iteration.dir/all
 CMakeFiles/examples.dir/all: examples/text_plot/CMakeFiles/text_plot.dir/all
+CMakeFiles/examples.dir/all: examples/sine_generator/CMakeFiles/sine_generator.dir/all
 CMakeFiles/examples.dir/all: examples/square_generator/CMakeFiles/square_generator.dir/all
-CMakeFiles/examples.dir/all: examples/triangle_generator/CMakeFiles/triangle_generator.dir/all
-CMakeFiles/examples.dir/all: examples/am_modulation/CMakeFiles/am_modulation.dir/all
 CMakeFiles/examples.dir/all: examples/generators/CMakeFiles/generators.dir/all
+CMakeFiles/examples.dir/all: examples/am_modulation/CMakeFiles/am_modulation.dir/all
+CMakeFiles/examples.dir/all: examples/triangle_generator/CMakeFiles/triangle_generator.dir/all
 CMakeFiles/examples.dir/all: examples/fft_filter/CMakeFiles/fft_filter.dir/all
-CMakeFiles/examples.dir/all: examples/fft_comparison/CMakeFiles/fft_comparison.dir/all
 CMakeFiles/examples.dir/all: examples/fft_simple_spectrum/CMakeFiles/fft_simple_spectrum.dir/all
-CMakeFiles/examples.dir/all: examples/dtw_path_recovery/CMakeFiles/dtw_path_recovery.dir/all
+CMakeFiles/examples.dir/all: examples/fft_comparison/CMakeFiles/fft_comparison.dir/all
 CMakeFiles/examples.dir/all: examples/mfcc_calculation/CMakeFiles/mfcc_calculation.dir/all
 CMakeFiles/examples.dir/all: examples/spectrogram/CMakeFiles/spectrogram.dir/all
+CMakeFiles/examples.dir/all: examples/dtw_path_recovery/CMakeFiles/dtw_path_recovery.dir/all
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\examples.dir\build.make CMakeFiles/examples.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\examples.dir\build.make CMakeFiles/examples.dir/build
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=C:\Ohjelmointi\AudioEQ\libs\aquila\build\CMakeFiles --progress-num= "Built target examples"
