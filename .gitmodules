@@ -4,3 +4,6 @@
 [submodule "rtaudio"]
 	path = libs/rtaudio
 	url = https://github.com/thestk/rtaudio.git
+[submodule "libs/wxWidgets"]
+	path = libs/wxWidgets
+	url = https://github.com/wxWidgets/wxWidgets.git
