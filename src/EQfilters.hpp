@@ -3,11 +3,11 @@
 #include <iostream>
 #include <vector>
 namespace EQ {
-std::vector<double> LowShelf(std::vector<double> input, double dB,
-                             double cofreq);
+double* LowShelf(double* filterdata, double gaindB, double cofreq,
+                 unsigned int inputsize);
 
-std::vector<double> HighShelf(std::vector<double> input, double dB,
-                              double cofreq);
+double* HighShelf(double* filterdata, double gaindB, double cofreq,
+                  unsigned int inputsize);
 }  // namespace EQ
 
 #endif

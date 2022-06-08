@@ -19,14 +19,20 @@ EQFrame::EQFrame() : wxFrame(NULL, wxID_ANY, "AudioEQ") {
   wxBoxSizer* devsizer = new wxBoxSizer(wxHORIZONTAL);
   wxChoice* inputdevs = new wxChoice(panel, ID_In);
   wxChoice* outputdevs = new wxChoice(panel, ID_Out);
+  Controls.inputnum = 0;
+  Controls.outputnum = 0;
   for (size_t i = 0; i < Controls.adac.getDeviceCount(); i++) {
-    if (Controls.adac.getDeviceInfo(i).inputChannels == 2) {
+    if (Controls.adac.getDeviceInfo(i).inputChannels > 0) {
       inputdevs->Append(Controls.adac.getDeviceInfo(i).name);
+      Controls.inputnum++;
     }
-    if (Controls.adac.getDeviceInfo(i).outputChannels == 2) {
+    if (Controls.adac.getDeviceInfo(i).outputChannels > 0) {
       outputdevs->Append(Controls.adac.getDeviceInfo(i).name);
+      Controls.outputnum++;
     }
   }
+  Bind(wxEVT_CHOICE, &EQFrame::OnChangeIn, this, ID_In);
+  Bind(wxEVT_CHOICE, &EQFrame::OnChangeOut, this, ID_Out);
   wxToggleButton* enable = new wxToggleButton(panel, ID_Enable, "Enable");
   Bind(wxEVT_TOGGLEBUTTON, &EQFrame::OnEnable, this, ID_Enable);
   devsizer->Add(enable);
@@ -42,6 +48,22 @@ EQFrame::EQFrame() : wxFrame(NULL, wxID_ANY, "AudioEQ") {
         panel, ID_Out + 1 + j, 0, -25, 25, wxDefaultPosition, wxSize(100, 300),
         wxSL_VERTICAL | wxSL_AUTOTICKS | wxSL_LABELS);
     cntrsizer->Add(slider);
+    Bind(wxEVT_SLIDER, &EQFrame::OnChangeGain, this, ID_Out + 1 + j);
+    if (j == 0) {
+      Controls.gains.push_back(0);
+      Controls.cofreqs.push_back(EQ::LowCoFreq);
+      Controls.types.push_back(EQ::FiltTypes::LShelf);
+    } else if (j == Controls.filternum - 1) {
+      Controls.gains.push_back(0);
+      Controls.cofreqs.push_back(EQ::HighCoFreq);
+      Controls.types.push_back(EQ::FiltTypes::HShelf);
+    } else {
+      Controls.gains.push_back(0);
+      Controls.cofreqs.push_back(EQ::LowCoFreq +
+                                 j * (EQ::HighCoFreq - EQ::LowCoFreq) /
+                                     (Controls.filternum - 1));
+      Controls.types.push_back(EQ::FiltTypes::ParamEQ);
+    }
   }
   topsizer->Add(cntrsizer, wxEXPAND);
 
@@ -53,8 +75,28 @@ EQFrame::EQFrame() : wxFrame(NULL, wxID_ANY, "AudioEQ") {
 void EQFrame::OnEnable(wxCommandEvent& event) {
   if (event.IsChecked()) {
     SetStatusText("AudioEQ is active.");
+    ToggleEQ(ToggleEQenum::On);
+
   } else {
     SetStatusText("AudioEQ is not active.");
+    ToggleEQ(ToggleEQenum::Off);
   }
+}
+
+void EQFrame::OnChangeOut(wxCommandEvent& event) {
+  if (event.GetSelection() == 2) {
+    SetStatusText("jee");
+  }
+  EQ::ChangeOutputDevice(event.GetSelection());
+}
+
+void EQFrame::OnChangeIn(wxCommandEvent& event) {
+  EQ::ChangeInputDevice(event.GetSelection());
+}
+
+void EQFrame::OnChangeGain(wxCommandEvent& event) {
+  std::cout << "ID: " << event.GetId() - (ID_Out + 1)
+            << " value: " << event.GetInt() << std::endl;
+  Controls.gains[event.GetId() - (ID_Out + 1)] = event.GetInt();
 }
 }  // namespace EQ

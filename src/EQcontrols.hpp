@@ -7,6 +7,9 @@
 namespace EQ {
 enum FiltTypes { LShelf, HShelf, ParamEQ };
 
+const int LowCoFreq = 120;
+const int HighCoFreq = 20000;
+
 struct EQControls {
   int filternum;                 // Number of filters
   std::vector<double> gains;     // Gains of the filters
@@ -18,7 +21,7 @@ struct EQControls {
   RtAudio::StreamParameters oParams;  // Output paremetres
   RtAudio::StreamParameters iParams;  // Input parametres
   unsigned int bufferFrames = 512;
-  unsigned int bufferBytes = bufferFrames * 8;
+  unsigned int bufferBytes = bufferFrames * 2 * 8;
 };
 
 extern EQControls Controls;

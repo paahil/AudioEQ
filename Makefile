@@ -59,5 +59,42 @@ $(BASEDIR)/$(BUILDDIR)/%.dll : $(RTBUILD)/%.dll
 run:
 	$(BUILDDIR)/$(EXE)
 
+TESTSRC:= $(wildcard $(BASEDIR)/test/*.cpp)
+TESTEXES:= $(subst .cpp,.exe,$(TESTSRC))
+TESTOBJS:= $(subst .cpp,.o,$(TESTSRC))
+TESTLDLIBS := -L$(WXLIB) $(WXLDLIBS) -L$(RTBUILD) -lrtaudio -L$(AQBUILD) -laquila -L$(AQBUILD)/lib -lOoura_fft
+test: $(TESTEXES)
+	del $(subst /,\,$(TESTOBJS))
+	$(MAKE) copytestdlls
+$(BASEDIR)/test/%.exe : $(BASEDIR)/test/%.o
+	@echo $<
+	@echo $^
+	@echo $@
+	$(CXX) $< -o $@ $(TESTLDLIBS) 
+$(BASEDIR)/test/%.o : $(BASEDIR)/test/%.cpp
+	@echo $<
+	@echo $@
+	$(CXX) $< $(CPPFLAGS) -o $@ -I$(WXMAIN) -I$(AQINCLUDE) -I$(RTINCLUDE) -I$(WXINCLUDE)
+
+testexe: $(BASEDIR)/$(BUILDDIR)/$(EXE)
+	rmdir /s /q $(subst /,\,$(BASEDIR)/$(OBJDIR))
+	$(MAKE) copydlls
+$(BASEDIR)/$(BUILDDIR)/$(EXE): $(OBJS)
+	$(CXX) $^ -o $@ $(TESTLDLIBS) 
+
+$(BASEDIR)/$(OBJDIR)/%.o: $(BASEDIR)/$(SRCDIR)/%.cpp
+	if not exist $(patsubst $(BASEDIR)/%, "%",$(dir $@)) mkdir $(patsubst $(BASEDIR)/%, "%",$(dir $@))
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< -o $@ -I$(WXMAIN) -I$(AQINCLUDE) -I$(RTINCLUDE) -I$(WXINCLUDE) 
+
+TESTDLLS:= $(patsubst $(BASEDIR)/$(BUILDDIR)/%.dll,$(BASEDIR)/test/%.dll,$(DESTDLLS))
+copytestdlls: $(TESTDLLS)
+$(BASEDIR)/test/%.dll : $(AQBUILD)/%.dll
+	cd $(AQBUILD) && copy /y $(notdir $<) $(subst /,\,$(BASEDIR)/test)
+
+$(BASEDIR)/test/%.dll : $(WXLIB)/%.dll
+	cd $(WXLIB) && copy /y $(notdir $<) $(subst /,\,$(BASEDIR)/test)
+$(BASEDIR)/test/%.dll : $(RTBUILD)/%.dll
+	cd $(RTBUILD) && copy /y $(notdir $<) $(subst /,\,$(BASEDIR)/test)
+
 clean: 
 	rmdir /s /q $(subst /,\,$(BASEDIR)/$(OBJDIR))

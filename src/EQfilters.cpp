@@ -1,24 +1,29 @@
 #include "EQfilters.hpp"
 
+#include <cmath>
+
 #include "aquila.h"
 namespace EQ {
-std::vector<double> LowShelf(std::vector<double> input, double dB,
-                             double cofreq) {
-  const double gain = std::pow(10, (dB / 20));
-  const std::size_t winsize = input.size();
-  const std::size_t FS = 44100;
+double* LowShelf(double* filterdata, double gaindB, double cofreq,
+                 unsigned int inputsize) {
+  const double gain = std::pow(10, (gaindB / 20));
+  unsigned int winsize = inputsize / sizeof(double);
+  unsigned int FS = 44100;
+  const double pi = 3.14159265358979323846;
+  const std::complex<double> i1(0, 1);
+  std::cout << "i=" << i1 << std::endl;
   auto fft = Aquila::FftFactory::getFft(winsize);
-  Aquila::SpectrumType spectrum = fft->fft(input.data());
+  Aquila::SpectrumType spectrum = fft->fft(filterdata);
   // generate a low-pass filter spectrum
   Aquila::SpectrumType filterSpectrum(winsize);
   for (std::size_t i = 0; i < winsize; ++i) {
-    if (i < (winsize * 120 / FS)) {
-      // passband
-      filterSpectrum[i] = gain;
-    } else {
-      // stopband
-      filterSpectrum[i] = 1.0;
-    }
+    double f = (i * FS * 0.5) / winsize;
+    filterSpectrum[i] = ((gain * std::tan(pi * cofreq) + std::sqrt(gain)) +
+                         (gain * std::tan(pi * cofreq) - std::sqrt(gain)) *
+                             std::exp(-2 * pi * f * i1)) /
+                        ((std::tan(pi * cofreq) + std::sqrt(gain)) +
+                         (std::tan(pi * cofreq) - std::sqrt(gain)) *
+                             std::exp(-2 * pi * f * i1));
   }
 
   // the following line does the multiplication of two spectra
@@ -29,12 +34,9 @@ std::vector<double> LowShelf(std::vector<double> input, double dB,
       [](Aquila::ComplexType x, Aquila::ComplexType y) { return x * y; });
 
   // Inverse FFT moves us back to time domain
-  double x1[winsize];
-  fft->ifft(spectrum, x1);
-  std::vector<double> output;
-  for (std::size_t i = 0; i < winsize; ++i) {
-    output.push_back(x1[i]);
-  }
-  return output;
+  double output[winsize];
+  fft->ifft(spectrum, output);
+  memcpy(filterdata, output, inputsize);
+  return filterdata;
 }
 }  // namespace EQ
