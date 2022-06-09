@@ -53,10 +53,12 @@ EQFrame::EQFrame() : wxFrame(NULL, wxID_ANY, "AudioEQ") {
       Controls.gains.push_back(0);
       Controls.cofreqs.push_back(EQ::LowCoFreq);
       Controls.types.push_back(EQ::FiltTypes::LShelf);
+      EQ::ChangeLowShelf(j,0,EQ::LowCoFreq);
     } else if (j == Controls.filternum - 1) {
       Controls.gains.push_back(0);
       Controls.cofreqs.push_back(EQ::HighCoFreq);
       Controls.types.push_back(EQ::FiltTypes::HShelf);
+      EQ::ChangeHighShelf(j,0,EQ::HighCoFreq);
     } else {
       Controls.gains.push_back(0);
       Controls.cofreqs.push_back(EQ::LowCoFreq +
@@ -95,8 +97,22 @@ void EQFrame::OnChangeIn(wxCommandEvent& event) {
 }
 
 void EQFrame::OnChangeGain(wxCommandEvent& event) {
-  std::cout << "ID: " << event.GetId() - (ID_Out + 1)
+  int id = event.GetId() - (ID_Out + 1);
+  std::cout << "ID: " << id
             << " value: " << event.GetInt() << std::endl;
-  Controls.gains[event.GetId() - (ID_Out + 1)] = event.GetInt();
+  
+  Controls.gains[id] = event.GetInt();
+  switch(Controls.types[id]){
+    case EQ::FiltTypes::LShelf:
+      EQ::ChangeLowShelf(id, Controls.gains[id], Controls.cofreqs[id]);
+      break;
+
+    case EQ::FiltTypes::HShelf:
+      EQ::ChangeHighShelf(id, Controls.gains[id], Controls.cofreqs[id]);
+      break;
+
+    default:
+      break;
+  }
 }
 }  // namespace EQ

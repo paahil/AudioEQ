@@ -4,11 +4,11 @@
             "name": "Win32",
             "includePath": [
                 "${default}",
-                "${workspaceFolder}/libs/wxWidgets/lib/mswu",
+                "${workspaceFolder}/libs/wxWidgets/lib/gcc_dll/mswu",
                 "${workspaceFolder}/libs/wxWidgets/include",
                 "${workspaceFolder}/libs/rtaudio",
                 "${workspaceFolder}/libs/aquila/aquila",
-                "${workspaceFolder}/libs/wxWidgets/lib/mswu"
+                "${workspaceFolder}/libs/wxWidgets/lib/gcc_dll/mswu"
             ],
             "defines": [
                 "_DEBUG",

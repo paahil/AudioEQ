@@ -4,7 +4,7 @@
 namespace EQ {
 wxIMPLEMENT_APP(EQApp);
 bool EQApp::OnInit() {
-  Controls.filternum = 2;
+  Controls.filternum = 1;
   EQFrame* frame = new EQFrame();
   frame->Show(true);
   return true;

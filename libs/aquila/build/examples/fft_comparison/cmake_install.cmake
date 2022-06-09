@@ -1,4 +1,4 @@
-# Install script for directory: C:/Ohjelmointi/AudioEQ/libs/aquila/examples/fft_comparison
+# Install script for directory: C:/Users/Paavo/Documents/AudioEQ/libs/aquila/examples/fft_comparison
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

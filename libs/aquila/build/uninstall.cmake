@@ -1,8 +1,8 @@
-IF(NOT EXISTS "C:/Ohjelmointi/AudioEQ/libs/aquila/build/install_manifest.txt")
-  MESSAGE(FATAL_ERROR "Cannot find install manifest: \"C:/Ohjelmointi/AudioEQ/libs/aquila/build/install_manifest.txt\"")
-ENDIF(NOT EXISTS "C:/Ohjelmointi/AudioEQ/libs/aquila/build/install_manifest.txt")
+IF(NOT EXISTS "C:/Users/Paavo/Documents/AudioEQ/libs/aquila/build/install_manifest.txt")
+  MESSAGE(FATAL_ERROR "Cannot find install manifest: \"C:/Users/Paavo/Documents/AudioEQ/libs/aquila/build/install_manifest.txt\"")
+ENDIF(NOT EXISTS "C:/Users/Paavo/Documents/AudioEQ/libs/aquila/build/install_manifest.txt")
 
-FILE(READ "C:/Ohjelmointi/AudioEQ/libs/aquila/build/install_manifest.txt" files)
+FILE(READ "C:/Users/Paavo/Documents/AudioEQ/libs/aquila/build/install_manifest.txt" files)
 STRING(REGEX REPLACE "\n" ";" files "${files}")
 FOREACH(file ${files})
   MESSAGE(STATUS "Uninstalling \"$ENV{DESTDIR}${file}\"")

@@ -13,33 +13,19 @@ int RWSoundCard(void *outputBuffer, void *inputBuffer,
   // a simple buffer copy operation here.
   if (status) std::cout << "Stream over/underflow detected." << std::endl;
   unsigned int *bytes = (unsigned int *)data;
-  double *filterdata;
-  filterdata = (double *)malloc(*bytes);
-  std::cout << "IN IO" << std::endl;
-  memcpy(filterdata, inputBuffer, *bytes);
-  std::cout << "After memcpy" << std::endl;
+  unsigned int SIZE = *bytes / sizeof(double);
+  double input[SIZE];
+  memcpy(input, inputBuffer, *bytes);
+  auto fft = Aquila::FftFactory::getFft(SIZE);
+  Aquila::SpectrumType spectrum = fft->fft(input);
   int len = Controls.filternum - 1;
   for (int i = 0; i <= len; i++) {
-    switch (Controls.types[i]) {
-      case FiltTypes::LShelf:
-        std::cout << "Low shelf" << std::endl;
-        filterdata = EQ::LowShelf(filterdata, Controls.gains[i],
-                                  Controls.cofreqs[i], *bytes);
-        std::cout << "After filter" << std::endl;
-        break;
-
-      case FiltTypes::HShelf:
-        // input = EQ::HighShelf(input, Controls.gains[i],
-        // Controls.cofreqs[i]);
-        break;
-
-      default:
-        break;
-    }
+    spectrum = Filter(spectrum, Controls.filtspects[i],*bytes);
   }
-  memcpy(outputBuffer, filterdata, *bytes);
-  free(filterdata);
-  std::cout << "After memcpy2" << std::endl;
+  //EQ::Normalize((double*) inputBuffer, filterdata, 0, *bytes);
+  double output[SIZE];
+  fft->ifft(spectrum, output);
+  memcpy(outputBuffer, output, *bytes);
   return 0;
 }
 

@@ -1,4 +1,4 @@
-# Install script for directory: C:/Ohjelmointi/AudioEQ/libs/aquila/examples/utility_functions
+# Install script for directory: C:/Users/Paavo/Documents/AudioEQ/libs/aquila/examples/utility_functions
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

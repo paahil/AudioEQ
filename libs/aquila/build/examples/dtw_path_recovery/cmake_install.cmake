@@ -1,4 +1,4 @@
-# Install script for directory: C:/Ohjelmointi/AudioEQ/libs/aquila/examples/dtw_path_recovery
+# Install script for directory: C:/Users/Paavo/Documents/AudioEQ/libs/aquila/examples/dtw_path_recovery
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

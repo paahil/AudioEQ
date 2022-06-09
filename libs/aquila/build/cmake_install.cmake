@@ -1,4 +1,4 @@
-# Install script for directory: C:/Ohjelmointi/AudioEQ/libs/aquila
+# Install script for directory: C:/Users/Paavo/Documents/AudioEQ/libs/aquila
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -38,26 +38,26 @@ if(NOT DEFINED CMAKE_OBJDUMP)
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib" TYPE STATIC_LIBRARY FILES "C:/Ohjelmointi/AudioEQ/libs/aquila/build/libAquila.a")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib" TYPE STATIC_LIBRARY FILES "C:/Users/Paavo/Documents/AudioEQ/libs/aquila/build/libAquila.a")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/aquila" TYPE DIRECTORY FILES "C:/Ohjelmointi/AudioEQ/libs/aquila/aquila/" FILES_MATCHING REGEX "/[^/]*\\.h$")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/aquila" TYPE DIRECTORY FILES "C:/Users/Paavo/Documents/AudioEQ/libs/aquila/aquila/" FILES_MATCHING REGEX "/[^/]*\\.h$")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
   file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/aquila" TYPE FILE FILES
-    "C:/Ohjelmointi/AudioEQ/libs/aquila/CHANGELOG"
-    "C:/Ohjelmointi/AudioEQ/libs/aquila/LICENSE"
-    "C:/Ohjelmointi/AudioEQ/libs/aquila/README.md"
+    "C:/Users/Paavo/Documents/AudioEQ/libs/aquila/CHANGELOG"
+    "C:/Users/Paavo/Documents/AudioEQ/libs/aquila/LICENSE"
+    "C:/Users/Paavo/Documents/AudioEQ/libs/aquila/README.md"
     )
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
-  include("C:/Ohjelmointi/AudioEQ/libs/aquila/build/lib/cmake_install.cmake")
-  include("C:/Ohjelmointi/AudioEQ/libs/aquila/build/examples/cmake_install.cmake")
-  include("C:/Ohjelmointi/AudioEQ/libs/aquila/build/tests/cmake_install.cmake")
+  include("C:/Users/Paavo/Documents/AudioEQ/libs/aquila/build/lib/cmake_install.cmake")
+  include("C:/Users/Paavo/Documents/AudioEQ/libs/aquila/build/examples/cmake_install.cmake")
+  include("C:/Users/Paavo/Documents/AudioEQ/libs/aquila/build/tests/cmake_install.cmake")
 
 endif()
 
@@ -69,5 +69,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "C:/Ohjelmointi/AudioEQ/libs/aquila/build/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "C:/Users/Paavo/Documents/AudioEQ/libs/aquila/build/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

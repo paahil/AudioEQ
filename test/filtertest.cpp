@@ -43,7 +43,7 @@ bool MyApp::OnInit() {
   double gaindB = 20;
   double gain = std::pow(10, (gaindB / 20));
   const double pi = 3.14159265358979323846;
-  double cofreq = (10000.0 / (FS)) * 2 * pi;
+  double cofreq = (18000.0 / (FS)) * 2 * pi;
   const std::complex<double> i1(0, 1);
   std::cout << "i=" << i1 << std::endl;
   Aquila::SpectrumType filterSpectrum(SIZEOWN);
@@ -53,17 +53,15 @@ bool MyApp::OnInit() {
     // std::cout << "f=" << f * FS << ", ";
     // std::cout << "wc=" << cofreq * FS / (2 * pi) << ", ";
 
-    std::complex<double> b(((gain * std::tan(cofreq / 2) + std::sqrt(gain)) +
-                            (gain * std::tan(cofreq / 2) - std::sqrt(gain)) *
+    std::complex<double> b(((std::sqrt(gain) * std::tan(cofreq / 2) + gain) +
+                            (std::sqrt(gain) * std::tan(cofreq / 2) - gain) *
                                 std::cos(-2 * pi * f)),
-                           (gain * std::tan(cofreq / 2) - std::sqrt(gain)) *
+                           (std::sqrt(gain) * std::tan(cofreq / 2) - gain) *
                                std::sin(-2 * pi * f));
-    // std::cout << "b=" << b << ", ";
-
     std::complex<double> a(
-        ((std::tan(cofreq / 2) + std::sqrt(gain)) +
-         (std::tan(cofreq / 2) - std::sqrt(gain)) * std::cos(-2 * pi * f)),
-        (std::tan(cofreq / 2) - std::sqrt(gain)) * std::sin(-2 * pi * f));
+        ((std::sqrt(gain) * std::tan(cofreq / 2) + 1) +
+         (std::sqrt(gain) * std::tan(cofreq / 2) - 1) * std::cos(-2 * pi * f)),
+        (std::sqrt(gain) * std::tan(cofreq / 2) - 1) * std::sin(-2 * pi * f));
     // std::cout << "a=" << a << ", ";
 
     filterSpectrum[i] = std::abs(b / a);

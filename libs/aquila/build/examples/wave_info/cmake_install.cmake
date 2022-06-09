@@ -1,4 +1,4 @@
-# Install script for directory: C:/Ohjelmointi/AudioEQ/libs/aquila/examples/wave_info
+# Install script for directory: C:/Users/Paavo/Documents/AudioEQ/libs/aquila/examples/wave_info
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

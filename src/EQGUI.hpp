@@ -1,7 +1,8 @@
 #ifndef EQGUI_HPP
 #define EQGUI_HPP
 #include <wx/wx.h>
-
+#include "EQfilters.hpp"
+#include "EQcontrols.hpp"
 #include "EQIO.hpp"
 namespace EQ {
 class EQFrame : public wxFrame {

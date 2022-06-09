@@ -1,4 +1,4 @@
-# Install script for directory: C:/Ohjelmointi/AudioEQ/libs/aquila/lib
+# Install script for directory: C:/Users/Paavo/Documents/AudioEQ/libs/aquila/lib
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -39,7 +39,7 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
-  include("C:/Ohjelmointi/AudioEQ/libs/aquila/build/lib/unittestpp/cmake_install.cmake")
+  include("C:/Users/Paavo/Documents/AudioEQ/libs/aquila/build/lib/unittestpp/cmake_install.cmake")
 
 endif()
 
