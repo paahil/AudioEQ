@@ -41,6 +41,10 @@ EQFrame::EQFrame() : wxFrame(NULL, wxID_ANY, "AudioEQ") {
   devsizer->Add(new wxStaticText(panel, wxID_ANY, " Output: "));
   devsizer->Add(outputdevs);
   topsizer->Add(devsizer);
+  Controls.previousSamples.push_back(0);
+  Controls.previousSamples.push_back(0);
+  Controls.previousSamples.push_back(0);
+  Controls.previousSamples.push_back(0);
 
   wxBoxSizer* cntrsizer = new wxBoxSizer(wxHORIZONTAL);
   for (int j = 0; j < Controls.filternum; j++) {
@@ -48,24 +52,13 @@ EQFrame::EQFrame() : wxFrame(NULL, wxID_ANY, "AudioEQ") {
         panel, ID_Out + 1 + j, 0, -25, 25, wxDefaultPosition, wxSize(100, 300),
         wxSL_VERTICAL | wxSL_AUTOTICKS | wxSL_LABELS);
     cntrsizer->Add(slider);
-    Bind(wxEVT_SLIDER, &EQFrame::OnChangeGain, this, ID_Out + 1 + j);
     if (j == 0) {
-      Controls.gains.push_back(0);
-      Controls.cofreqs.push_back(EQ::LowCoFreq);
-      Controls.types.push_back(EQ::FiltTypes::LShelf);
       EQ::ChangeLowShelf(j,0,EQ::LowCoFreq);
-    } else if (j == Controls.filternum - 1) {
-      Controls.gains.push_back(0);
-      Controls.cofreqs.push_back(EQ::HighCoFreq);
-      Controls.types.push_back(EQ::FiltTypes::HShelf);
+    } else if (j == 1) {
       EQ::ChangeHighShelf(j,0,EQ::HighCoFreq);
     } else {
-      Controls.gains.push_back(0);
-      Controls.cofreqs.push_back(EQ::LowCoFreq +
-                                 j * (EQ::HighCoFreq - EQ::LowCoFreq) /
-                                     (Controls.filternum - 1));
-      Controls.types.push_back(EQ::FiltTypes::ParamEQ);
     }
+    Bind(wxEVT_SLIDER, &EQFrame::OnChangeGain, this, ID_Out + 1 + j);
   }
   topsizer->Add(cntrsizer, wxEXPAND);
 
@@ -100,15 +93,13 @@ void EQFrame::OnChangeGain(wxCommandEvent& event) {
   int id = event.GetId() - (ID_Out + 1);
   std::cout << "ID: " << id
             << " value: " << event.GetInt() << std::endl;
-  
-  Controls.gains[id] = event.GetInt();
-  switch(Controls.types[id]){
-    case EQ::FiltTypes::LShelf:
-      EQ::ChangeLowShelf(id, Controls.gains[id], Controls.cofreqs[id]);
+  switch(id){
+    case 0:
+      EQ::ChangeLowShelf(id, event.GetInt(), EQ::LowCoFreq);
       break;
 
-    case EQ::FiltTypes::HShelf:
-      EQ::ChangeHighShelf(id, Controls.gains[id], Controls.cofreqs[id]);
+    case 1:
+      EQ::ChangeHighShelf(id, event.GetInt(), EQ::HighCoFreq);
       break;
 
     default:

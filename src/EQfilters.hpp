@@ -12,7 +12,7 @@ void ChangeHighShelf(unsigned int index, double gaindB, double cofreq);
 
 void ChangePNFilter(unsigned int index, double gaindB, double cofreq);
 
-void Filter(double* inputspec, unsigned int filtindx, unsigned int inputsize);
+void Filter(double* inputspec, unsigned int filter, unsigned int channel, unsigned int inputsize);
 
 double* Normalize(double* input, double* filterdata, double gaindB,
                   unsigned int inputsize);

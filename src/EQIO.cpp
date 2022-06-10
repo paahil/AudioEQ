@@ -25,22 +25,16 @@ int RWSoundCard(void *outputBuffer, void *inputBuffer,
       channel2[i / 2] = input[i];
     }
   }
-  auto fft = Aquila::FftFactory::getFft(EQ::Controls.bufferFrames);
-  Aquila::SpectrumType spectrumChan1 = fft->fft(channel1);
-  Aquila::SpectrumType spectrumChan2 = fft->fft(channel2);
-  int len = Controls.filternum - 1;
-  for (int i = 0; i <= len; i++) {
-    spectrumChan1 = Filter(spectrumChan1, Controls.filtspects[i], SIZE / 2);
-    spectrumChan2 = Filter(spectrumChan2, Controls.filtspects[i], SIZE / 2);
+  for (int i = 0; i < Controls.filternum; i++) {
+    Filter(channel1, i,2, SIZE / 2);
+    Filter(channel2, i,2, SIZE / 2);
   }
   double output[SIZE];
-  fft->ifft(spectrumChan1, channel1);
-  fft->ifft(spectrumChan2, channel2);
   for (unsigned int i = 0; i < SIZE; i++) {
     if (i % 2 == 0) {
-      output[i] = channel1[i / 2];
+      output[i] = 10*channel1[i / 2];
     } else {
-      output[i] = channel2[i / 2];
+      output[i] = 10*channel2[i / 2];
     }
   }
   // EQ::Normalize(input, output, 0, SIZE);

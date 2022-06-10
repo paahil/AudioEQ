@@ -13,11 +13,9 @@ const int HighCoFreq = 18000;
 const double QFact = 1.0;
 
 struct EQControls {
-  int filternum;                 // Number of filters
-  std::vector<double> gains;     // Gains of the filters
-  std::vector<double> cofreqs;   // Cut-off frequencies of the filters
-  std::vector<FiltTypes> types;  // Types of the filters
-  std::vector<Aquila::SpectrumType> filtspects;
+  int filternum;
+  std::vector<double> previousSamples;
+  std::vector<std::pair<std::vector<double>,std::vector<double>>> filters; // vector of pairs containing numerator and denominator coeficcients
   RtAudio adac;
   int outputnum;                      // Number of output devices
   int inputnum;                       // Number of input devices
