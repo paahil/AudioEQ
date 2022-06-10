@@ -1,40 +1,42 @@
 #include <cstdlib>
 #include <cstring>
 #include <iostream>
+#include <vector>
 
 #include "RtAudio.h"
 #include "aquila.h"
-double *filter(double *filterdata, unsigned int size) {
-  unsigned int winsize = size / sizeof(double);
-  unsigned int FS = 44100;
-  auto fft = Aquila::FftFactory::getFft(winsize);
-  std::cout << "In Low shelf" << std::endl;
-  Aquila::SpectrumType spectrum = fft->fft(filterdata);
-  std::cout << "After FFT" << std::endl;
-  // generate a low-pass filter spectrum
-  Aquila::SpectrumType filterSpectrum(winsize);
-  for (std::size_t i = 0; i < winsize; ++i) {
-    if (i < (winsize * 120 / FS)) {
-      // passband
-      filterSpectrum[i] = 1.0;
-    } else {
-      // stopband
-      filterSpectrum[i] = 1.0;
+std::vector<float> prevsamp1(2);
+std::vector<float> prevsamp2(2);
+
+void filter(double *input, unsigned int size, unsigned int indx) {
+  float a1 = -0.9881;
+  float b0 = 1.0276;
+  float b1 = -0.9604;
+  double output[size];
+  if (indx == 1) {
+    output[0] = b0 * input[0] + b1 * prevsamp1[0] - a1 * prevsamp1[1];
+  } else {
+    output[0] = b0 * input[0] + b1 * prevsamp2[0] - a1 * prevsamp2[1];
+  }
+  // output[0] = 0;
+  //  std::cout << "pre" << prevsamp1[0] << " ";
+  float inputmax = input[0];
+  float outputmax = output[0];
+  for (std::size_t i = 1; i < size; ++i) {
+    output[i] = b0 * input[i] + b1 * input[i - 1] + a1 * output[i - 1];
+    if (i == size - 1) {
+      if (indx == 1) {
+        prevsamp1[0] = input[size - 2];
+        prevsamp1[1] = output[size - 2];
+      } else {
+        prevsamp2[0] = input[size - 2];
+        prevsamp2[1] = output[size - 2];
+      }
     }
   }
+  memcpy(input, output, size);
 
-  // the following line does the multiplication of two spectra
-  // (which is complementary to convolution in time domain)
-  std::transform(
-      std::begin(spectrum), std::end(spectrum), std::begin(filterSpectrum),
-      std::begin(spectrum),
-      [](Aquila::ComplexType x, Aquila::ComplexType y) { return x * y; });
-
-  // Inverse FFT moves us back to time domain
-  double output[winsize];
-  fft->ifft(spectrum, output);
-  memcpy(filterdata, output, size);
-  return filterdata;
+  // std::cout << "post" << prevsamp1[0] << " ";
 }
 
 // Pass-through function.
@@ -44,12 +46,30 @@ int inout(void *outputBuffer, void *inputBuffer, unsigned int nBufferFrames,
   // a simple buffer copy operation here.
   if (status) std::cout << "Stream over/underflow detected." << std::endl;
   unsigned int *bytes = (unsigned int *)data;
-  double *filterdata;
-  filterdata = (double *)malloc(*bytes);
-  memcpy(filterdata, inputBuffer, *bytes);
-  filterdata = filter(filterdata, *bytes);
-  memcpy(outputBuffer, filterdata, *bytes);
-  free(filterdata);
+  unsigned int SIZE = *bytes / sizeof(double);
+  double input[SIZE];
+  memcpy(input, inputBuffer, *bytes);
+  double channel1[SIZE / 2];
+  double channel2[SIZE / 2];
+  for (unsigned int i = 0; i < SIZE; i++) {
+    if (i % 2 == 0) {
+      channel1[i / 2] = input[i];
+    } else {
+      channel2[i / 2] = input[i];
+    }
+  }
+  // filter(channel1, SIZE / 2, 1);
+  // filter(channel2, SIZE / 2, 2);
+  double output[SIZE];
+  for (unsigned int i = 0; i < SIZE; i++) {
+    if (i % 2 == 0) {
+      output[i] = channel1[i / 2];
+    } else {
+      output[i] = channel2[i / 2];
+    }
+  }
+  memcpy(outputBuffer, output, *bytes);
+  // memcpy(outputBuffer, inputBuffer, *bytes);
   return 0;
 }
 int main() {

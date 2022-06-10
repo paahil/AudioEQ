@@ -2,6 +2,7 @@
 #define EQ_FILTERSHPP
 #include <iostream>
 #include <vector>
+
 #include "EQcontrols.hpp"
 
 namespace EQ {
@@ -11,10 +12,9 @@ void ChangeHighShelf(unsigned int index, double gaindB, double cofreq);
 
 void ChangePNFilter(unsigned int index, double gaindB, double cofreq);
 
-Aquila::SpectrumType Filter(Aquila::SpectrumType inputspec, Aquila::SpectrumType filterspec,
-                  unsigned int inputsize);
+void Filter(double* inputspec, unsigned int filtindx, unsigned int inputsize);
 
-double* Normalize(double* input, double* filterdata, double gaindB, 
+double* Normalize(double* input, double* filterdata, double gaindB,
                   unsigned int inputsize);
 }  // namespace EQ
 

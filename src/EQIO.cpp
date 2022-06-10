@@ -16,15 +16,34 @@ int RWSoundCard(void *outputBuffer, void *inputBuffer,
   unsigned int SIZE = *bytes / sizeof(double);
   double input[SIZE];
   memcpy(input, inputBuffer, *bytes);
-  auto fft = Aquila::FftFactory::getFft(SIZE);
-  Aquila::SpectrumType spectrum = fft->fft(input);
+  double channel1[SIZE / 2];
+  double channel2[SIZE / 2];
+  for (unsigned int i = 0; i < SIZE; i++) {
+    if (i % 2 == 0) {
+      channel1[i / 2] = input[i];
+    } else {
+      channel2[i / 2] = input[i];
+    }
+  }
+  auto fft = Aquila::FftFactory::getFft(EQ::Controls.bufferFrames);
+  Aquila::SpectrumType spectrumChan1 = fft->fft(channel1);
+  Aquila::SpectrumType spectrumChan2 = fft->fft(channel2);
   int len = Controls.filternum - 1;
   for (int i = 0; i <= len; i++) {
-    spectrum = Filter(spectrum, Controls.filtspects[i],*bytes);
+    spectrumChan1 = Filter(spectrumChan1, Controls.filtspects[i], SIZE / 2);
+    spectrumChan2 = Filter(spectrumChan2, Controls.filtspects[i], SIZE / 2);
   }
-  //EQ::Normalize((double*) inputBuffer, filterdata, 0, *bytes);
   double output[SIZE];
-  fft->ifft(spectrum, output);
+  fft->ifft(spectrumChan1, channel1);
+  fft->ifft(spectrumChan2, channel2);
+  for (unsigned int i = 0; i < SIZE; i++) {
+    if (i % 2 == 0) {
+      output[i] = channel1[i / 2];
+    } else {
+      output[i] = channel2[i / 2];
+    }
+  }
+  // EQ::Normalize(input, output, 0, SIZE);
   memcpy(outputBuffer, output, *bytes);
   return 0;
 }

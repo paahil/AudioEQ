@@ -2,7 +2,8 @@
 #define EQCONTROLSHPP
 #include <iostream>
 #include <vector>
-#include"../libs/aquila/aquila/aquila.h"
+
+#include "../libs/aquila/aquila/aquila.h"
 #include "../libs/rtaudio/RtAudio.h"
 namespace EQ {
 enum FiltTypes { LShelf, HShelf, ParamEQ };
@@ -22,7 +23,7 @@ struct EQControls {
   int inputnum;                       // Number of input devices
   RtAudio::StreamParameters oParams;  // Output paremetres
   RtAudio::StreamParameters iParams;  // Input parametres
-  unsigned int bufferFrames = 1024;
+  unsigned int bufferFrames = 2048;
   unsigned int bufferBytes = bufferFrames * 2 * 8;
 };
 
