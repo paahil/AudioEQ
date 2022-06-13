@@ -18,15 +18,15 @@ void filter(double *input, unsigned int size, unsigned int indx) {
   } else {
     output[0] = b0 * input[0] + b1 * prevsamp2[0] - a1 * prevsamp2[1];
   }
-  
+
   double inputmax = input[0];
   double outputmax = output[0];
   for (std::size_t i = 1; i < size; ++i) {
-    output[i] = b0 * input[i] + b1 * input[i - 1] + a1 * output[i - 1];
-    if (input[i] > inputmax){
+    output[i] = b0 * input[i] + b1 * input[i - 1] - a1 * output[i - 1];
+    if (input[i] > inputmax) {
       inputmax = input[i];
     }
-    if (output[i]> outputmax){
+    if (output[i] > outputmax) {
       outputmax = output[i];
     }
     if (i == size - 1) {
@@ -39,10 +39,10 @@ void filter(double *input, unsigned int size, unsigned int indx) {
       }
     }
   }
-  for(std::size_t i = 1; i < size; ++i) {
-    output[i] = output[i]/outputmax;
+  for (std::size_t i = 1; i < size; ++i) {
+    output[i] = output[i] / outputmax;
   }
-  memcpy(input, output, size*sizeof(double));
+  memcpy(input, output, size * sizeof(double));
   // std::cout << "post" << prevsamp1[0] << " ";
 }
 
@@ -56,8 +56,8 @@ int inout(void *outputBuffer, void *inputBuffer, unsigned int nBufferFrames,
   unsigned int SIZE = *bytes / sizeof(double);
   double input[SIZE];
   memcpy(input, inputBuffer, *bytes);
-  double* channel1 = (double*) malloc(*bytes/2);
-  double* channel2 = (double*) malloc(*bytes/2);
+  double *channel1 = (double *)malloc(*bytes / 2);
+  double *channel2 = (double *)malloc(*bytes / 2);
   for (unsigned int i = 0; i < SIZE; i++) {
     if (i % 2 == 0) {
       channel1[i / 2] = input[i];
@@ -70,9 +70,9 @@ int inout(void *outputBuffer, void *inputBuffer, unsigned int nBufferFrames,
   double output[SIZE];
   for (unsigned int i = 0; i < SIZE; i++) {
     if (i % 2 == 0) {
-      output[i] = 0.1*channel1[i / 2];
+      output[i] = 0.1 * channel1[i / 2];
     } else {
-      output[i] = 0.1*channel2[i / 2];
+      output[i] = 0.1 * channel2[i / 2];
     }
   }
   free(channel1);
@@ -88,7 +88,7 @@ int main() {
     exit(0);
   }
   // Set the same number of channels for both input and output.
-  unsigned int bufferBytes, bufferFrames = 512*10;
+  unsigned int bufferBytes, bufferFrames = 512 * 10;
   RtAudio::StreamParameters iParams, oParams;
   iParams.deviceId = 3;  // Cable out
   iParams.nChannels = 2;
