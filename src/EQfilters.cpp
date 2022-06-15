@@ -37,7 +37,7 @@ void ChangeHighShelf(unsigned int index, double gaindB, double cofreq) {
                 (std::sqrt(gain) * std::tan(angcofreq / 2) + 1));
   den.push_back((std::sqrt(gain) * std::tan(angcofreq / 2) - 1) /
                 (std::sqrt(gain) * std::tan(angcofreq / 2) + 1));
-  if (index > Controls.filters.size()) {
+  if (index >= Controls.filters.size()) {
     Controls.filters.push_back(std::make_pair(num, den));
   } else {
     Controls.filters[index] = std::make_pair(num, den);
@@ -48,58 +48,40 @@ void Filter(double* input, unsigned int filter, unsigned int channel,
             unsigned int inputsize) {
   std::vector<double> num = std::get<0>(Controls.filters[filter]);
   std::vector<double> den = std::get<1>(Controls.filters[filter]);
-  double scale = num[0] + num[1] - den[0];
+  double iprev, oprev;
   double output[inputsize];
   if (channel == 1) {
-    output[0] = (num[0] * input[0] + num[1] * Controls.previousSamples[0] -
-                 den[0] * Controls.previousSamples[1]) /
-                scale;
+    iprev = Controls.previousSamples[filter][0].first.first;
+    oprev = Controls.previousSamples[filter][0].first.second;
   } else {
-    output[0] = (num[0] * input[0] + num[1] * Controls.previousSamples[3] -
-                 den[0] * Controls.previousSamples[4]) /
-                scale;
+    iprev = Controls.previousSamples[filter][0].second.first;
+    oprev = Controls.previousSamples[filter][0].second.first;
   }
-  // output[0] = 0;
-  //  std::cout << "pre" << prevsamp1[0] << " ";
-  float inputmax = input[0];
-  float outputmax = output[0];
+  output[0] = num[0] * input[0] + num[1] * iprev - den[0] * oprev;
+
   for (std::size_t i = 1; i < inputsize; ++i) {
     output[i] =
-        (num[0] * input[i] + num[1] * input[i - 1] - den[0] * output[i - 1]) /
-        scale;
+        (num[0] * input[i] + num[1] * input[i - 1] - den[0] * output[i - 1]);
     if (i == inputsize - 1) {
       if (channel == 1) {
-        Controls.previousSamples[0] = input[i];
-        Controls.previousSamples[1] = output[i];
+        Controls.previousSamples[filter][0].first.first = input[i];
+        Controls.previousSamples[filter][0].first.second = output[i];
       } else {
-        Controls.previousSamples[3] = input[i];
-        Controls.previousSamples[4] = output[i];
+        Controls.previousSamples[filter][0].second.first = input[i];
+        Controls.previousSamples[filter][0].second.second = output[i];
       }
     }
   }
   memcpy(input, output, inputsize * sizeof(double));
 }
 
-double* Normalize(double* input, double* filterdata, double gaindB,
-                  unsigned int inputsize) {
-  // Normalize output
+void Scale(double* input, double gaindB, unsigned int inputsize) {
+  // Scale the input
   const double gain = std::pow(10, (gaindB / 20));
-  double maxorig = input[0];
-  double maxfilt = filterdata[0];
-
+  double output[inputsize];
   for (unsigned int i = 0; i < inputsize; i++) {
-    if (input[i] > maxorig) {
-      maxorig = input[i];
-    }
-    if (filterdata[i] > maxfilt) {
-      maxfilt = filterdata[i];
-    }
+    output[i] = gain * input[i];
   }
-
-  for (unsigned int i = 0; i < inputsize; i++) {
-    filterdata[i] = gain * (maxorig * filterdata[i] / maxfilt);
-  }
-
-  return filterdata;
+  memcpy(input, output, inputsize * sizeof(double));
 }
 }  // namespace EQ

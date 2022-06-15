@@ -41,17 +41,16 @@ EQFrame::EQFrame() : wxFrame(NULL, wxID_ANY, "AudioEQ") {
   devsizer->Add(new wxStaticText(panel, wxID_ANY, " Output: "));
   devsizer->Add(outputdevs);
   topsizer->Add(devsizer);
-  Controls.previousSamples.push_back(0);
-  Controls.previousSamples.push_back(0);
-  Controls.previousSamples.push_back(0);
-  Controls.previousSamples.push_back(0);
-
+  
   wxBoxSizer* cntrsizer = new wxBoxSizer(wxHORIZONTAL);
   for (int j = 0; j < Controls.filternum; j++) {
     wxSlider* slider = new wxSlider(
         panel, ID_Out + 1 + j, 0, -25, 25, wxDefaultPosition, wxSize(100, 300),
         wxSL_VERTICAL | wxSL_AUTOTICKS | wxSL_LABELS);
     cntrsizer->Add(slider);
+    std::vector<std::pair<std::pair<double,double>,std::pair<double,double>>> prevs;
+    prevs.push_back(std::make_pair(std::make_pair(0,0),std::make_pair(0,0)));
+    Controls.previousSamples.push_back(prevs);
     if (j == 0) {
       EQ::ChangeLowShelf(j,0,EQ::LowCoFreq);
     } else if (j == 1) {

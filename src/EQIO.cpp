@@ -25,19 +25,23 @@ int RWSoundCard(void *outputBuffer, void *inputBuffer,
       channel2[i / 2] = input[i];
     }
   }
+
   for (int i = 0; i < Controls.filternum; i++) {
     Filter(channel1, i,2, SIZE / 2);
+  }
+  for (int i = 0; i < Controls.filternum; i++) {
     Filter(channel2, i,2, SIZE / 2);
   }
+
   double output[SIZE];
   for (unsigned int i = 0; i < SIZE; i++) {
     if (i % 2 == 0) {
-      output[i] = 10*channel1[i / 2];
+      output[i] = channel1[i / 2];
     } else {
-      output[i] = 10*channel2[i / 2];
+      output[i] = channel2[i / 2];
     }
   }
-  // EQ::Normalize(input, output, 0, SIZE);
+  EQ::Scale(output, 0, SIZE);
   memcpy(outputBuffer, output, *bytes);
   return 0;
 }

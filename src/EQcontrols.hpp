@@ -14,14 +14,14 @@ const double QFact = 1.0;
 
 struct EQControls {
   int filternum;
-  std::vector<double> previousSamples;
+  std::vector<std::vector<std::pair<std::pair<double,double>,std::pair<double,double>>>> previousSamples; // vector size of maximum delay containing vector of previous samples for each filter and two channels given as a pair
   std::vector<std::pair<std::vector<double>,std::vector<double>>> filters; // vector of pairs containing numerator and denominator coeficcients
   RtAudio adac;
   int outputnum;                      // Number of output devices
   int inputnum;                       // Number of input devices
   RtAudio::StreamParameters oParams;  // Output paremetres
   RtAudio::StreamParameters iParams;  // Input parametres
-  unsigned int bufferFrames = 2048;
+  unsigned int bufferFrames = 6*512;
   unsigned int bufferBytes = bufferFrames * 2 * 8;
 };
 
