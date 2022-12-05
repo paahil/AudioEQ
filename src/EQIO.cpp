@@ -1,5 +1,6 @@
 #include "EQIO.hpp"
 
+#include <chrono>
 #include <iostream>
 #include <vector>
 
@@ -9,15 +10,23 @@ namespace EQ {
 int RWSoundCard(void *outputBuffer, void *inputBuffer,
                 unsigned int nBufferFrames, double streamTime,
                 RtAudioStreamStatus status, void *data) {
-  // Since the number of input and output channels is equal, we can do
-  // a simple buffer copy operation here.
+  auto start = std::chrono::steady_clock::now();
   if (status) std::cout << "Stream over/underflow detected." << std::endl;
-  unsigned int *bytes = (unsigned int *)data;
-  unsigned int SIZE = *bytes / sizeof(double);
+
+  EQControls *cntrls = (EQControls *)data;
+  unsigned int bytes = nBufferFrames * 2 * 8;
+  unsigned int SIZE = bytes / sizeof(double);
   double input[SIZE];
-  memcpy(input, inputBuffer, *bytes);
+  memcpy(input, inputBuffer, bytes);
   double channel1[SIZE / 2];
   double channel2[SIZE / 2];
+  /*auto istop = std::chrono::steady_clock::now();
+  std::cout << "INIT: "
+            << std::chrono::duration_cast<std::chrono::nanoseconds>(istop -
+                                                                    start)
+                   .count()
+            << " ns" << std::endl;
+  auto cstart = std::chrono::steady_clock::now();*/
   for (unsigned int i = 0; i < SIZE; i++) {
     if (i % 2 == 0) {
       channel1[i / 2] = input[i];
@@ -25,37 +34,64 @@ int RWSoundCard(void *outputBuffer, void *inputBuffer,
       channel2[i / 2] = input[i];
     }
   }
-  for (int i = 0; i < Controls.filternum; i++) {
-    Filter(channel1, i,2, SIZE / 2);
-    Filter(channel2, i,2, SIZE / 2);
+  /*auto cstop = std::chrono::steady_clock::now();
+  std::cout << ", Channel split: "
+            << std::chrono::duration_cast<std::chrono::nanoseconds>(cstop -
+                                                                    cstart)
+                   .count()
+            << " ns" << std::endl;*/
+  auto fstart = std::chrono::steady_clock::now();
+  for (int i = 0; i < cntrls->filternum; i++) {
+    Filter(cntrls, channel1, i, 1, SIZE / 2);
+    Filter(cntrls, channel2, i, 2, SIZE / 2);
   }
+  auto fstop = std::chrono::steady_clock::now();
+  std::cout << ", Filtering: "
+            << std::chrono::duration_cast<std::chrono::nanoseconds>(fstop -
+                                                                    fstart)
+                   .count()
+            << " ns" << std::endl; /*
+   auto ostart = std::chrono::steady_clock::now();*/
   double output[SIZE];
   for (unsigned int i = 0; i < SIZE; i++) {
     if (i % 2 == 0) {
-      output[i] = 10*channel1[i / 2];
+      output[i] = channel1[i / 2];
     } else {
-      output[i] = 10*channel2[i / 2];
+      output[i] = channel2[i / 2];
     }
   }
   // EQ::Normalize(input, output, 0, SIZE);
-  memcpy(outputBuffer, output, *bytes);
+  memcpy(outputBuffer, output, bytes);
+  auto stop = std::chrono::steady_clock::now();
+  /* std::cout << ", Output Formatting: "
+             << std::chrono::duration_cast<std::chrono::nanoseconds>(stop -
+                                                                     ostart)
+                    .count()
+             << " ns" << std::endl;*/
+  /*std::cout << ", TOTAL: "
+            << std::chrono::duration_cast<std::chrono::nanoseconds>(stop -
+                                                                    start)
+                   .count()
+            << " ns" << std::endl;*/
   return 0;
 }
 
-int ToggleEQ(ToggleEQenum a) {
+int ToggleEQ(EQControls *cntrls, ToggleEQenum a) {
   switch (a) {
     case On:
       try {
-        Controls.adac.openStream(&Controls.oParams, &Controls.iParams,
-                                 RTAUDIO_FLOAT64, 44100, &Controls.bufferFrames,
-                                 &RWSoundCard, (void *)&Controls.bufferBytes);
+        cntrls->adac.openStream(&cntrls->oParams, &cntrls->iParams,
+                                RTAUDIO_FLOAT64, 44100, &cntrls->bufferFrames,
+                                &RWSoundCard, (void *)cntrls);
+        cntrls->bufferBytes = cntrls->bufferFrames * 2 * 8;
+        std::cout << cntrls->bufferBytes << std::endl;
       } catch (RtAudioErrorType &e) {
         // e.printMessage();
         std::cout << "Error Open" << std::endl;
         return -1;
       }
       try {
-        Controls.adac.startStream();
+        cntrls->adac.startStream();
       } catch (RtAudioErrorType &e) {
         std::cout << "Error Start" << std::endl;
         // e.printMessage();
@@ -64,7 +100,7 @@ int ToggleEQ(ToggleEQenum a) {
       break;
     case Off:
       try {
-        Controls.adac.stopStream();
+        cntrls->adac.stopStream();
       } catch (RtAudioErrorType &e) {
         // e.printMessage();
         std::cout << "Error Stop" << std::endl;

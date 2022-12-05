@@ -6,13 +6,17 @@
 #include "EQcontrols.hpp"
 
 namespace EQ {
-void ChangeLowShelf(unsigned int index, double gaindB, double cofreq);
+void ChangeLowShelf(EQControls* cntrls, unsigned int index, double gaindB,
+                    double cofreq);
 
-void ChangeHighShelf(unsigned int index, double gaindB, double cofreq);
+void ChangeHighShelf(EQControls* cntrls, unsigned int index, double gaindB,
+                     double cofreq);
 
-void ChangePNFilter(unsigned int index, double gaindB, double cofreq);
+void ChangePNFilter(EQControls* cntrls, unsigned int index, double gaindB,
+                    double cofreq);
 
-void Filter(double* inputspec, unsigned int filter, unsigned int channel, unsigned int inputsize);
+void Filter(EQControls* cntrls, double* input, unsigned int filter,
+            unsigned int channel, unsigned int inputsize);
 
 double* Normalize(double* input, double* filterdata, double gaindB,
                   unsigned int inputsize);

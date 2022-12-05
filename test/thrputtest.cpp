@@ -1,3 +1,4 @@
+#include <chrono>
 #include <cstdlib>
 #include <cstring>
 #include <iostream>
@@ -7,28 +8,32 @@
 #include "aquila.h"
 std::vector<double> prevsamp1(2);
 std::vector<double> prevsamp2(2);
+const double pi = 3.14159265358979323846;
+double db = 25.0;
+double gain = std::pow(10.0, (db / 20));
+double angcofreq = 2 * pi * (120.0 / 44100);
+double b0 = ((gain * std::tan(angcofreq / 2) + std::sqrt(gain)) /
+             (std::tan(angcofreq / 2) + std::sqrt(gain)));
+double b1 = (gain * std::tan(angcofreq / 2) - std::sqrt(gain)) /
+            (std::tan(angcofreq / 2) + std::sqrt(gain));
+double a1 = (std::tan(angcofreq / 2) - std::sqrt(gain)) /
+            (std::tan(angcofreq / 2) + std::sqrt(gain));
+/*
+double b0 = 1.0312;
+double b1 = -0.9651;
+double a1 = -0.9963;*/
 
 void filter(double *input, unsigned int size, unsigned int indx) {
-  double a1 = -0.9881;
-  double b0 = 1.0276;
-  double b1 = -0.9604;
   double output[size];
+  std::cout << b0 << ", " << b1 << ", " << a1 << "\n";
   if (indx == 1) {
     output[0] = b0 * input[0] + b1 * prevsamp1[0] - a1 * prevsamp1[1];
   } else {
     output[0] = b0 * input[0] + b1 * prevsamp2[0] - a1 * prevsamp2[1];
   }
 
-  double inputmax = input[0];
-  double outputmax = output[0];
   for (std::size_t i = 1; i < size; ++i) {
     output[i] = b0 * input[i] + b1 * input[i - 1] - a1 * output[i - 1];
-    if (input[i] > inputmax) {
-      inputmax = input[i];
-    }
-    if (output[i] > outputmax) {
-      outputmax = output[i];
-    }
     if (i == size - 1) {
       if (indx == 1) {
         prevsamp1[0] = input[i];
@@ -39,9 +44,6 @@ void filter(double *input, unsigned int size, unsigned int indx) {
       }
     }
   }
-  for (std::size_t i = 1; i < size; ++i) {
-    output[i] = output[i] / outputmax;
-  }
   memcpy(input, output, size * sizeof(double));
   // std::cout << "post" << prevsamp1[0] << " ";
 }
@@ -49,15 +51,22 @@ void filter(double *input, unsigned int size, unsigned int indx) {
 // Pass-through function.
 int inout(void *outputBuffer, void *inputBuffer, unsigned int nBufferFrames,
           double streamTime, RtAudioStreamStatus status, void *data) {
-  // Since the number of input and output channels is equal, we can do
-  // a simple buffer copy operation here.
+  auto start = std::chrono::steady_clock::now();
   if (status) std::cout << "Stream over/underflow detected." << std::endl;
+
   unsigned int *bytes = (unsigned int *)data;
   unsigned int SIZE = *bytes / sizeof(double);
   double input[SIZE];
   memcpy(input, inputBuffer, *bytes);
-  double *channel1 = (double *)malloc(*bytes / 2);
-  double *channel2 = (double *)malloc(*bytes / 2);
+  double channel1[SIZE / 2];
+  double channel2[SIZE / 2];
+  auto istop = std::chrono::steady_clock::now();
+  std::cout << "INIT: "
+            << std::chrono::duration_cast<std::chrono::nanoseconds>(istop -
+                                                                    start)
+                   .count()
+            << " ns" << std::endl;
+  auto cstart = std::chrono::steady_clock::now();
   for (unsigned int i = 0; i < SIZE; i++) {
     if (i % 2 == 0) {
       channel1[i / 2] = input[i];
@@ -65,34 +74,59 @@ int inout(void *outputBuffer, void *inputBuffer, unsigned int nBufferFrames,
       channel2[i / 2] = input[i];
     }
   }
+  auto cstop = std::chrono::steady_clock::now();
+  std::cout << ", Channel split: "
+            << std::chrono::duration_cast<std::chrono::nanoseconds>(cstop -
+                                                                    cstart)
+                   .count()
+            << " ns" << std::endl;
+  auto fstart = std::chrono::steady_clock::now();
   filter(channel1, SIZE / 2, 1);
   filter(channel2, SIZE / 2, 2);
+  auto fstop = std::chrono::steady_clock::now();
+  std::cout << ", Filtering: "
+            << std::chrono::duration_cast<std::chrono::nanoseconds>(cstop -
+                                                                    cstart)
+                   .count()
+            << " ns" << std::endl;
+  auto ostart = std::chrono::steady_clock::now();
   double output[SIZE];
   for (unsigned int i = 0; i < SIZE; i++) {
     if (i % 2 == 0) {
-      output[i] = 0.1 * channel1[i / 2];
+      output[i] = channel1[i / 2];
     } else {
-      output[i] = 0.1 * channel2[i / 2];
+      output[i] = channel2[i / 2];
     }
   }
-  free(channel1);
-  free(channel2);
+  // EQ::Normalize(input, output, 0, SIZE);
   memcpy(outputBuffer, output, *bytes);
-  // memcpy(outputBuffer, inputBuffer, *bytes);
+  auto stop = std::chrono::steady_clock::now();
+  std::cout << ", Output Formatting: "
+            << std::chrono::duration_cast<std::chrono::nanoseconds>(stop -
+                                                                    ostart)
+                   .count()
+            << " ns" << std::endl;
+  std::cout << ", TOTAL: "
+            << std::chrono::duration_cast<std::chrono::nanoseconds>(stop -
+                                                                    start)
+                   .count()
+            << " ns" << std::endl;
   return 0;
 }
 int main() {
+  std::cout << gain << " " << angcofreq << std::endl;
+  std::cout << b0 << " " << b1 << " " << a1 << std::endl;
   RtAudio adac;
   if (adac.getDeviceCount() < 1) {
     std::cout << "\nNo audio devices found!\n";
     exit(0);
   }
   // Set the same number of channels for both input and output.
-  unsigned int bufferBytes, bufferFrames = 512 * 10;
+  unsigned int bufferBytes, bufferFrames = 512 * 1;
   RtAudio::StreamParameters iParams, oParams;
-  iParams.deviceId = 3;  // Cable out
+  iParams.deviceId = 4;  // Cable out
   iParams.nChannels = 2;
-  oParams.deviceId = 0;  // first available device
+  oParams.deviceId = 1;  // first available device
   oParams.nChannels = 2;
   try {
     adac.openStream(&oParams, &iParams, RTAUDIO_FLOAT64, 44100, &bufferFrames,
