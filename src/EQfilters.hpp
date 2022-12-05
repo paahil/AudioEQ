@@ -18,8 +18,7 @@ void ChangePNFilter(EQControls* cntrls, unsigned int index, double gaindB,
 void Filter(EQControls* cntrls, double* input, unsigned int filter,
             unsigned int channel, unsigned int inputsize);
 
-double* Normalize(double* input, double* filterdata, double gaindB,
-                  unsigned int inputsize);
+void Scale(double* input, double gaindB, unsigned int inputsize);
 }  // namespace EQ
 
 #endif

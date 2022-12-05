@@ -77,8 +77,8 @@ void Filter(EQControls* cntrls, double* input, unsigned int filter,
         (num[1] * input[i] + num[0] * input[i - 1] - den[0] * output[i - 1]);
     if (i == inputsize - 1) {
       if (channel == 1) {
-        cntrls->previousSamples[filter][0] = input[i];
-        cntrls->previousSamples[filter][1] = output[i];
+        cntrls->previousSamples[filter][filter][0].first.first = input[i];
+        cntrls->previousSamples[filter][filter][0].first.second = output[i];
       } else {
         cntrls->previousSamples[filter][2] = input[i];
         cntrls->previousSamples[filter][3] = output[i];
