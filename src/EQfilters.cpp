@@ -3,9 +3,7 @@
 #include <cmath>
 
 namespace EQ {
-double num[2] = {0, 0};
-double den[2] = {0, 0};
-double prevsamp[4] = {0, 0, 0, 0};
+
 void ChangeLowShelf(EQControls* cntrls, unsigned int index, double gaindB,
                     double cofreq) {
   unsigned int FS = 44100;
@@ -77,8 +75,8 @@ void Filter(EQControls* cntrls, double* input, unsigned int filter,
         (num[1] * input[i] + num[0] * input[i - 1] - den[0] * output[i - 1]);
     if (i == inputsize - 1) {
       if (channel == 1) {
-        cntrls->previousSamples[filter][filter][0].first.first = input[i];
-        cntrls->previousSamples[filter][filter][0].first.second = output[i];
+        cntrls->previousSamples[filter][0] = input[i];
+        cntrls->previousSamples[filter][1] = output[i];
       } else {
         cntrls->previousSamples[filter][2] = input[i];
         cntrls->previousSamples[filter][3] = output[i];
@@ -88,26 +86,4 @@ void Filter(EQControls* cntrls, double* input, unsigned int filter,
   memcpy(input, output, inputsize * sizeof(double));
 }
 
-double* Normalize(double* input, double* filterdata, double gaindB,
-                  unsigned int inputsize) {
-  // Normalize output
-  const double gain = std::pow(10, (gaindB / 10));
-  double maxorig = input[0];
-  double maxfilt = filterdata[0];
-
-  for (unsigned int i = 0; i < inputsize; i++) {
-    if (input[i] > maxorig) {
-      maxorig = input[i];
-    }
-    if (filterdata[i] > maxfilt) {
-      maxfilt = filterdata[i];
-    }
-  }
-
-  for (unsigned int i = 0; i < inputsize; i++) {
-    filterdata[i] = gain * (maxorig * filterdata[i] / maxfilt);
-  }
-
-  return filterdata;
-}
 }  // namespace EQ

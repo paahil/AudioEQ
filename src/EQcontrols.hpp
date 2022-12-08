@@ -22,7 +22,7 @@ struct EQControls {
   int inputnum;                       // Number of input devices
   RtAudio::StreamParameters oParams;  // Output paremetres
   RtAudio::StreamParameters iParams;  // Input parametres
-  unsigned int bufferFrames = 50 * 256;
+  unsigned int bufferFrames = 512;
   unsigned int bufferBytes = 0;
 };
 

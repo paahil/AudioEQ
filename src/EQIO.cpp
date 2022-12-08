@@ -12,7 +12,6 @@ int RWSoundCard(void *outputBuffer, void *inputBuffer,
                 RtAudioStreamStatus status, void *data) {
   auto start = std::chrono::steady_clock::now();
   if (status) std::cout << "Stream over/underflow detected." << std::endl;
-
   EQControls *cntrls = (EQControls *)data;
   unsigned int bytes = nBufferFrames * 2 * 8;
   unsigned int SIZE = bytes / sizeof(double);
@@ -34,6 +33,7 @@ int RWSoundCard(void *outputBuffer, void *inputBuffer,
       channel2[i / 2] = input[i];
     }
   }
+
   /*auto cstop = std::chrono::steady_clock::now();
   std::cout << ", Channel split: "
             << std::chrono::duration_cast<std::chrono::nanoseconds>(cstop -
@@ -46,7 +46,7 @@ int RWSoundCard(void *outputBuffer, void *inputBuffer,
     Filter(cntrls, channel2, i, 2, SIZE / 2);
   }
   auto fstop = std::chrono::steady_clock::now();
-  std::cout << ", Filtering: "
+  /*std::cout << ", Filtering: "
             << std::chrono::duration_cast<std::chrono::nanoseconds>(fstop -
                                                                     fstart)
                    .count()
@@ -60,7 +60,7 @@ int RWSoundCard(void *outputBuffer, void *inputBuffer,
       output[i] = channel2[i / 2];
     }
   }
-  // EQ::Normalize(input, output, 0, SIZE);
+
   memcpy(outputBuffer, output, bytes);
   auto stop = std::chrono::steady_clock::now();
   /* std::cout << ", Output Formatting: "
