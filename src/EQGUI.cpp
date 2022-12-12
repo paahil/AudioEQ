@@ -55,9 +55,10 @@ EQFrame::EQFrame() : wxFrame(NULL, wxID_ANY, "AudioEQ") {
     cntrsizer->Add(slider);
     if (j == 0) {
       EQ::ChangeLowShelf(controls, j, 0, EQ::LowCoFreq);
-    } else if (j == 1) {
+    } else if (j == controls->filternum - 1) {
       EQ::ChangeHighShelf(controls, j, 0, EQ::HighCoFreq);
     } else {
+      EQ::ChangePNFilter(controls, j, 0, EQ::GetPNFreq(controls, j));
     }
     Bind(wxEVT_SLIDER, &EQFrame::OnChangeGain, this, ID_Out + 1 + j);
     std::vector<double> wlvl(2, 0.0);
@@ -162,18 +163,15 @@ void EQFrame::OnChangeIn(wxCommandEvent& event) {
 void EQFrame::OnChangeGain(wxCommandEvent& event) {
   EQApp* main = &(wxGetApp());
   EQControls* controls = main->GetControls();
+  int maxind = controls->filternum - 1;
   int id = event.GetId() - (ID_Out + 1);
-  switch (id) {
-    case 0:
-      EQ::ChangeLowShelf(controls, id, event.GetInt(), EQ::LowCoFreq);
-      break;
-
-    case 1:
-      EQ::ChangeHighShelf(controls, id, event.GetInt(), EQ::HighCoFreq);
-      break;
-
-    default:
-      break;
+  if (id == 0) {
+    EQ::ChangeLowShelf(controls, id, event.GetInt(), EQ::LowCoFreq);
+  } else if (id == maxind) {
+    EQ::ChangeHighShelf(controls, id, event.GetInt(), EQ::HighCoFreq);
+  } else {
+    EQ::ChangePNFilter(controls, id, event.GetInt(),
+                       EQ::GetPNFreq(controls, id));
   }
 }
 }  // namespace EQ

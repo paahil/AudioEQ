@@ -28,8 +28,6 @@ void ChangeLowShelf(EQControls* cntrls, unsigned int index, double gaindB,
     den[i] = den[i] / den[0];
   }
   den[0] = 1;
-  std::cout << num[0] << ", " << num[1] << ", " << num[2] << ", " << den[1]
-            << ", " << den[2] << "\n";
   if (index >= cntrls->filters.size()) {
     cntrls->filters.push_back(std::make_pair(num, den));
   } else {
@@ -61,8 +59,6 @@ void ChangeHighShelf(EQControls* cntrls, unsigned int index, double gaindB,
     den[i] = den[i] / den[0];
   }
   den[0] = 1;
-  std::cout << num[0] << ", " << num[1] << num[2] << ", "
-            << ", " << den[1] << ", " << den[2] << "\n";
   if (index >= cntrls->filters.size()) {
     cntrls->filters.push_back(std::make_pair(num, den));
   } else {
@@ -74,6 +70,7 @@ void ChangePNFilter(EQControls* cntrls, unsigned int index, double gaindB,
                     double cofreq) {
   const double gain = std::pow(10.0, (gaindB / 20));
   const double angcofreq = (cofreq * 2.0 * pi) / FS;
+  std::cout << "cf=" << cofreq << "\n";
   std::vector<double> num, den;
   num.push_back(std::sqrt(gain) + gain * std::tan(angcofreq / (2 * QFact)));
   num.push_back(-2 * std::sqrt(gain) * std::cos(angcofreq));
@@ -87,7 +84,6 @@ void ChangePNFilter(EQControls* cntrls, unsigned int index, double gaindB,
     den[i] = den[i] / den[0];
   }
   den[0] = 1;
-  std::cout << num[0] << ", " << num[1] << ", " << den[0] << "\n";
   if (index >= cntrls->filters.size()) {
     cntrls->filters.push_back(std::make_pair(num, den));
   } else {
@@ -95,11 +91,16 @@ void ChangePNFilter(EQControls* cntrls, unsigned int index, double gaindB,
   }
 }
 
+double GetPNFreq(EQControls* cntrls, unsigned int index) {
+  double freq =
+      EQ::LowCoFreq + (index) * (EQ::MidBand / (cntrls->filternum - 1.0));
+  return freq;
+}
+
 void Filter(EQControls* cntrls, double* input, unsigned int filter,
             unsigned int channel, unsigned int inputsize) {
   std::vector<double> num = std::get<0>(cntrls->filters[filter]);
   std::vector<double> den = std::get<1>(cntrls->filters[filter]);
-  std::cout << num[0] << ", " << num[1] << ", " << den[0] << "\n";
   double output[inputsize];
   double w1[inputsize];
   double w2[inputsize];

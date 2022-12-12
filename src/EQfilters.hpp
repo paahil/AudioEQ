@@ -15,6 +15,8 @@ void ChangeHighShelf(EQControls* cntrls, unsigned int index, double gaindB,
 void ChangePNFilter(EQControls* cntrls, unsigned int index, double gaindB,
                     double cofreq);
 
+double GetPNFreq(EQControls* cntrls, unsigned int index);
+
 void Filter(EQControls* cntrls, double* input, unsigned int filter,
             unsigned int channel, unsigned int inputsize);
 
