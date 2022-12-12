@@ -42,8 +42,8 @@ int RWSoundCard(void *outputBuffer, void *inputBuffer,
             << " ns" << std::endl;*/
   auto fstart = std::chrono::steady_clock::now();
   for (int i = 0; i < cntrls->filternum; i++) {
-    Filter(cntrls, channel1, i, 1, SIZE / 2);
-    Filter(cntrls, channel2, i, 2, SIZE / 2);
+    Filter(cntrls, channel1, i, 0, SIZE / 2);
+    Filter(cntrls, channel2, i, 1, SIZE / 2);
   }
   auto fstop = std::chrono::steady_clock::now();
   /*std::cout << ", Filtering: "

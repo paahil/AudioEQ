@@ -9,11 +9,16 @@ enum FiltTypes { LShelf, HShelf, ParamEQ };
 
 const int LowCoFreq = 120;
 const int HighCoFreq = 12000;
-const double QFact = 1.0;
+const double QFact = 4.0;
+const unsigned int FS = 44100;
+const double pi = 3.14159265358979323846;
 
 struct EQControls {
-  int filternum;
-  std::vector<std::vector<double>> previousSamples;
+  int filternum;  // Number of filters in the EQ
+  std::vector<std::vector<std::vector<double>>>
+      previousSamples;  // vector of pairs (input and output) of pairs
+                        // (channels 1 and 2) containing N=filter order of
+                        // previous samples
   std::vector<std::pair<std::vector<double>, std::vector<double>>>
       filters;  // vector of pairs containing numerator and denominator
                 // coeficcients

@@ -60,8 +60,9 @@ EQFrame::EQFrame() : wxFrame(NULL, wxID_ANY, "AudioEQ") {
     } else {
     }
     Bind(wxEVT_SLIDER, &EQFrame::OnChangeGain, this, ID_Out + 1 + j);
-    std::vector<double> filtprevsamples(4, 0.0);
-    controls->previousSamples.push_back(filtprevsamples);
+    std::vector<double> wlvl(2, 0.0);
+    std::vector<std::vector<double>> chnlvl(2, wlvl);
+    controls->previousSamples.push_back(chnlvl);
   }
   topsizer->Add(cntrsizer, wxEXPAND);
 

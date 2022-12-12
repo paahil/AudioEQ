@@ -6,24 +6,30 @@ namespace EQ {
 
 void ChangeLowShelf(EQControls* cntrls, unsigned int index, double gaindB,
                     double cofreq) {
-  unsigned int FS = 44100;
-  const double pi = 3.14159265358979323846;
   const double gain = std::pow(10.0, ((double)gaindB / 20.0));
   const double angcofreq = (cofreq * 2 * pi) / FS;
-  /*num[0] = ((gain * std::tan(angcofreq / 2) + std::sqrt(gain)) /
-            (std::tan(angcofreq / 2) + std::sqrt(gain)));
-  num[1] = ((gain * std::tan(angcofreq / 2) - std::sqrt(gain)) /
-            (std::tan(angcofreq / 2) + std::sqrt(gain)));
-  den[0] = ((std::tan(angcofreq / 2) - std::sqrt(gain)) /
-            (std::tan(angcofreq / 2) + std::sqrt(gain)));*/
+  const double omega = std::tan(angcofreq / 2);
   std::vector<double> num, den;
-  num.push_back((gain * std::tan(angcofreq / 2) + std::sqrt(gain)) /
-                (std::tan(angcofreq / 2) + std::sqrt(gain)));
-  num.push_back((gain * std::tan(angcofreq / 2) - std::sqrt(gain)) /
-                (std::tan(angcofreq / 2) + std::sqrt(gain)));
-  den.push_back((std::tan(angcofreq / 2) - std::sqrt(gain)) /
-                (std::tan(angcofreq / 2) + std::sqrt(gain)));
-  std::cout << num[0] << ", " << num[1] << ", " << den[0] << "\n";
+  num.push_back(std::sqrt(gain) * (std::sqrt(gain) * std::pow(omega, 2.0) +
+                                   sqrt(2) * omega * std::pow(gain, 0.25) + 1));
+  num.push_back(std::sqrt(gain) * 2 *
+                (std::sqrt(gain) * std::pow(omega, 2.0) - 1));
+  num.push_back(std::sqrt(gain) * (std::sqrt(gain) * std::pow(omega, 2.0) -
+                                   sqrt(2) * omega * std::pow(gain, 0.25) + 1));
+  den.push_back(std::sqrt(gain) + sqrt(2) * omega * std::pow(gain, 0.25) +
+                std::pow(omega, 2.0));
+  den.push_back(2 * (std::pow(omega, 2.0) - std::sqrt(gain)));
+  den.push_back(std::sqrt(gain) - sqrt(2) * omega * std::pow(gain, 0.25) +
+                std::pow(omega, 2.0));
+
+  num[0] = num[0] / den[0];
+  for (unsigned int i = 1; i < 3; i++) {
+    num[i] = num[i] / den[0];
+    den[i] = den[i] / den[0];
+  }
+  den[0] = 1;
+  std::cout << num[0] << ", " << num[1] << ", " << num[2] << ", " << den[1]
+            << ", " << den[2] << "\n";
   if (index >= cntrls->filters.size()) {
     cntrls->filters.push_back(std::make_pair(num, den));
   } else {
@@ -33,17 +39,54 @@ void ChangeLowShelf(EQControls* cntrls, unsigned int index, double gaindB,
 
 void ChangeHighShelf(EQControls* cntrls, unsigned int index, double gaindB,
                      double cofreq) {
-  unsigned int FS = 44100;
-  const double pi = 3.14159265358979323846;
+  const double gain = std::pow(10.0, (gaindB / 20));
+  const double angcofreq = (cofreq * 2.0 * pi) / FS;
+  const double omega = std::tan(angcofreq / 2);
+  std::vector<double> num, den;
+  num.push_back(std::sqrt(gain) * (std::sqrt(gain) + std::pow(omega, 2.0) +
+                                   sqrt(2) * omega * std::pow(gain, 0.25)));
+  num.push_back(std::sqrt(gain) * -2 *
+                (std::sqrt(gain) - std::pow(omega, 2.0)));
+  num.push_back(std::sqrt(gain) * (std::sqrt(gain) + std::pow(omega, 2.0) -
+                                   sqrt(2) * omega * std::pow(gain, 0.25)));
+  den.push_back(std::sqrt(gain) * std::pow(omega, 2.0) +
+                sqrt(2) * omega * std::pow(gain, 0.25) + 1);
+  den.push_back(2 * (std::sqrt(gain) * std::pow(omega, 2.0) - 1));
+  den.push_back(std::sqrt(gain) * std::pow(omega, 2.0) -
+                sqrt(2) * omega * std::pow(gain, 0.25) + 1);
+
+  num[0] = num[0] / den[0];
+  for (unsigned int i = 1; i < 3; i++) {
+    num[i] = num[i] / den[0];
+    den[i] = den[i] / den[0];
+  }
+  den[0] = 1;
+  std::cout << num[0] << ", " << num[1] << num[2] << ", "
+            << ", " << den[1] << ", " << den[2] << "\n";
+  if (index >= cntrls->filters.size()) {
+    cntrls->filters.push_back(std::make_pair(num, den));
+  } else {
+    cntrls->filters[index] = std::make_pair(num, den);
+  }
+}
+
+void ChangePNFilter(EQControls* cntrls, unsigned int index, double gaindB,
+                    double cofreq) {
   const double gain = std::pow(10.0, (gaindB / 20));
   const double angcofreq = (cofreq * 2.0 * pi) / FS;
   std::vector<double> num, den;
-  num.push_back((std::sqrt(gain) * std::tan(angcofreq / 2) + gain) /
-                (std::sqrt(gain) * std::tan(angcofreq / 2) + 1));
-  num.push_back((std::sqrt(gain) * std::tan(angcofreq / 2) - gain) /
-                (std::sqrt(gain) * std::tan(angcofreq / 2) + 1));
-  den.push_back((std::sqrt(gain) * std::tan(angcofreq / 2) - 1) /
-                (std::sqrt(gain) * std::tan(angcofreq / 2) + 1));
+  num.push_back(std::sqrt(gain) + gain * std::tan(angcofreq / (2 * QFact)));
+  num.push_back(-2 * std::sqrt(gain) * std::cos(angcofreq));
+  num.push_back(std::sqrt(gain) - gain * std::tan(angcofreq / (2 * QFact)));
+  den.push_back(std::sqrt(gain) + gain * std::tan(angcofreq / (2 * QFact)));
+  den.push_back(-2 * std::sqrt(gain) * std::cos(angcofreq));
+  den.push_back(std::sqrt(gain) - std::tan(angcofreq / (2 * QFact)));
+  num[0] = num[0] / den[0];
+  for (unsigned int i = 1; i < 3; i++) {
+    num[i] = num[i] / den[0];
+    den[i] = den[i] / den[0];
+  }
+  den[0] = 1;
   std::cout << num[0] << ", " << num[1] << ", " << den[0] << "\n";
   if (index >= cntrls->filters.size()) {
     cntrls->filters.push_back(std::make_pair(num, den));
@@ -56,33 +99,24 @@ void Filter(EQControls* cntrls, double* input, unsigned int filter,
             unsigned int channel, unsigned int inputsize) {
   std::vector<double> num = std::get<0>(cntrls->filters[filter]);
   std::vector<double> den = std::get<1>(cntrls->filters[filter]);
-  // std::cout << num[0] << ", " << num[1] << ", " << den[0] << "\n";
+  std::cout << num[0] << ", " << num[1] << ", " << den[0] << "\n";
   double output[inputsize];
-  if (channel == 1) {
-    output[0] =
-        (num[0] * input[0] + num[1] * cntrls->previousSamples[filter][0] -
-         den[0] * cntrls->previousSamples[filter][1]);
-  } else {
-    output[0] =
-        (num[1] * input[0] + num[0] * cntrls->previousSamples[filter][2] -
-         den[0] * cntrls->previousSamples[filter][3]);
-  }
-  // output[0] = 0;
-  //  std::cout << "pre" << prevsamp1[0] << " ";
-
-  for (std::size_t i = 1; i < inputsize; ++i) {
-    output[i] =
-        (num[1] * input[i] + num[0] * input[i - 1] - den[0] * output[i - 1]);
-    if (i == inputsize - 1) {
-      if (channel == 1) {
-        cntrls->previousSamples[filter][0] = input[i];
-        cntrls->previousSamples[filter][1] = output[i];
-      } else {
-        cntrls->previousSamples[filter][2] = input[i];
-        cntrls->previousSamples[filter][3] = output[i];
-      }
+  double w1[inputsize];
+  double w2[inputsize];
+  for (std::size_t i = 0; i < inputsize; ++i) {
+    if (i == 0) {
+      output[i] =
+          num[0] * input[0] + cntrls->previousSamples[filter][channel][0];
+      w1[i] = num[1] * input[i] - den[1] * output[i] +
+              cntrls->previousSamples[filter][channel][1];
+    } else {
+      output[i] = num[0] * input[i] + w1[i - 1];
+      w1[i] = num[1] * input[i] - den[1] * output[i] + w2[i - 1];
     }
+    w2[i] = num[2] * input[i] - den[2] * output[i];
   }
+  cntrls->previousSamples[filter][channel][0] = w1[inputsize - 1];
+  cntrls->previousSamples[filter][channel][1] = w2[inputsize - 1];
   memcpy(input, output, inputsize * sizeof(double));
 }
 

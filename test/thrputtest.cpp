@@ -6,43 +6,56 @@
 
 #include "RtAudio.h"
 #include "aquila.h"
-std::vector<double> prevsamp1(2);
-std::vector<double> prevsamp2(2);
+std::vector<double> prevsamp1(3, 0.0);
+std::vector<double> prevsamp2(3, 0.0);
 const double pi = 3.14159265358979323846;
 double db = 25.0;
 double gain = std::pow(10.0, (db / 20));
 double angcofreq = 2 * pi * (120.0 / 44100);
-double b0 = ((gain * std::tan(angcofreq / 2) + std::sqrt(gain)) /
-             (std::tan(angcofreq / 2) + std::sqrt(gain)));
-double b1 = (gain * std::tan(angcofreq / 2) - std::sqrt(gain)) /
-            (std::tan(angcofreq / 2) + std::sqrt(gain));
-double a1 = (std::tan(angcofreq / 2) - std::sqrt(gain)) /
-            (std::tan(angcofreq / 2) + std::sqrt(gain));
-/*
-double b0 = 1.0312;
-double b1 = -0.9651;
-double a1 = -0.9963;*/
+double b[] = {1.4803, -1.7759, 0.6493};
+double a[] = {1, -1.9522, 0.9533};
+// double b[] = {1.0312, -0.9651};
+// double a[] = {1, -0.9963};
 
 void filter(double *input, unsigned int size, unsigned int indx) {
   double output[size];
-  std::cout << b0 << ", " << b1 << ", " << a1 << "\n";
-  if (indx == 1) {
-    output[0] = b0 * input[0] + b1 * prevsamp1[0] - a1 * prevsamp1[1];
-  } else {
-    output[0] = b0 * input[0] + b1 * prevsamp2[0] - a1 * prevsamp2[1];
-  }
-
-  for (std::size_t i = 1; i < size; ++i) {
-    output[i] = b0 * input[i] + b1 * input[i - 1] - a1 * output[i - 1];
-    if (i == size - 1) {
+  double w1[size];
+  double w2[size];
+  for (std::size_t i = 0; i < size; ++i) {
+    if (i == 0) {
       if (indx == 1) {
-        prevsamp1[0] = input[i];
-        prevsamp1[1] = output[i];
+        output[i] = b[0] * input[0] + prevsamp1[0];
+        w1[i] = b[1] * input[i] - a[1] * output[i] + prevsamp1[2];
       } else {
-        prevsamp2[0] = input[i];
-        prevsamp2[1] = output[i];
+        output[i] = b[0] * input[0] + prevsamp2[0];
+        w1[i] = b[1] * input[i] - a[1] * output[i] + prevsamp2[2];
       }
+    } else if (i == 1) {
+      if (indx == 1) {
+        output[i] = b[0] * input[0] + prevsamp1[0];
+        w1[i] = b[1] * input[i] - a[1] * output[i] + prevsamp1[1];
+      } else {
+        output[i] = b[0] * input[0] + prevsamp2[0];
+        w1[i] = b[1] * input[i] - a[1] * output[i] + prevsamp2[1];
+      }
+    } else {
+      output[i] = b[0] * input[i] + w1[i - 1];
+      w1[i] = b[1] * input[i] - a[1] * output[i] + w2[i - 1];
     }
+
+    /*if (i < 10) {
+      std::cout << "in=" << input[i] << ", out=" << output[i] << "\n";
+    }*/
+    w2[i] = b[2] * input[i] - a[2] * output[i];
+  }
+  if (indx == 1) {
+    prevsamp1[0] = w1[size - 1];
+    prevsamp1[1] = w2[size - 1];
+    prevsamp1[2] = w2[size - 2];
+  } else {
+    prevsamp2[0] = w1[size - 1];
+    prevsamp2[1] = w2[size - 1];
+    prevsamp2[2] = w2[size - 2];
   }
   memcpy(input, output, size * sizeof(double));
   // std::cout << "post" << prevsamp1[0] << " ";
@@ -61,11 +74,11 @@ int inout(void *outputBuffer, void *inputBuffer, unsigned int nBufferFrames,
   double channel1[SIZE / 2];
   double channel2[SIZE / 2];
   auto istop = std::chrono::steady_clock::now();
-  std::cout << "INIT: "
-            << std::chrono::duration_cast<std::chrono::nanoseconds>(istop -
-                                                                    start)
-                   .count()
-            << " ns" << std::endl;
+  // std::cout << "INIT: "
+  //           << std::chrono::duration_cast<std::chrono::nanoseconds>(istop -
+  //                                                                   start)
+  //                 .count()
+  //          << " ns" << std::endl;
   auto cstart = std::chrono::steady_clock::now();
   for (unsigned int i = 0; i < SIZE; i++) {
     if (i % 2 == 0) {
@@ -75,11 +88,11 @@ int inout(void *outputBuffer, void *inputBuffer, unsigned int nBufferFrames,
     }
   }
   auto cstop = std::chrono::steady_clock::now();
-  std::cout << ", Channel split: "
-            << std::chrono::duration_cast<std::chrono::nanoseconds>(cstop -
-                                                                    cstart)
-                   .count()
-            << " ns" << std::endl;
+  /* std::cout << ", Channel split: "
+             << std::chrono::duration_cast<std::chrono::nanoseconds>(cstop -
+                                                                     cstart)
+                    .count()
+             << " ns" << std::endl;*/
   auto fstart = std::chrono::steady_clock::now();
   filter(channel1, SIZE / 2, 1);
   filter(channel2, SIZE / 2, 2);
@@ -114,8 +127,6 @@ int inout(void *outputBuffer, void *inputBuffer, unsigned int nBufferFrames,
   return 0;
 }
 int main() {
-  std::cout << gain << " " << angcofreq << std::endl;
-  std::cout << b0 << " " << b1 << " " << a1 << std::endl;
   RtAudio adac;
   if (adac.getDeviceCount() < 1) {
     std::cout << "\nNo audio devices found!\n";
