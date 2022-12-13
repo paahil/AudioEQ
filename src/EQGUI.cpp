@@ -3,6 +3,7 @@
 #include <wx/tglbtn.h>
 
 #include <chrono>
+#include <csignal>
 #include <thread>
 
 #include "EQcontrols.hpp"
@@ -65,46 +66,32 @@ EQFrame::EQFrame() : wxFrame(NULL, wxID_ANY, "AudioEQ") {
     std::vector<std::vector<double>> chnlvl(2, wlvl);
     controls->previousSamples.push_back(chnlvl);
   }
-  topsizer->Add(cntrsizer, wxEXPAND);
-
+  wxBoxSizer* screensizer = new wxBoxSizer(wxHORIZONTAL);
+  specplot = new SpecDrawPane(panel);
+  specplot->SetMinSize(wxSize(800, 200));
+  screensizer->Add(specplot);
+  topsizer->Add(screensizer);
+  topsizer->Add(cntrsizer);
   panel->SetSizer(topsizer);
   SetSizer(framesizer);
   framesizer->SetSizeHints(this);
 }
 
-IOThread::~IOThread() {
+EQFrame::RefreshScreen() { specplot->paintNow(); }
+
+RefreshThread::~RefreshThread() {
   wxCriticalSectionLocker enter(pHandler->pThreadCS);
   pHandler->pThread = NULL;
 }
 
-wxThread::ExitCode IOThread::Entry() {
-  try {
-    pControls->adac.openStream(&pControls->oParams, &pControls->iParams,
-                               RTAUDIO_FLOAT64, 44100, &pControls->bufferFrames,
-                               &RWSoundCard, (void*)pControls);
-    pControls->bufferBytes = pControls->bufferFrames * 2 * 8;
-    std::cout << pControls->bufferBytes << std::endl;
-  } catch (RtAudioErrorType& e) {
-    // e.printMessage();
-    std::cout << "Error Open" << std::endl;
-    return (wxThread::ExitCode)-1;
-  }
-  try {
-    pControls->adac.startStream();
-  } catch (RtAudioErrorType& e) {
-    std::cout << "Error Start" << std::endl;
-    // e.printMessage();
-    return (wxThread::ExitCode)-1;
-  }
+wxThread::ExitCode RefreshThread::Entry() {
+  EQApp* main = &(wxGetApp());
+  EQFrame* frame = main->GetEQFrame();
+  EQControls* cntrls = main->GetControls();
+  int sleeptime = 1000 / cntrls->FPS;  // in milliseconds;
   while (!TestDestroy()) {
-    // std::this_thread::sleep_for(std::chrono::milliseconds(10));
-  }
-  try {
-    pControls->adac.stopStream();
-  } catch (RtAudioErrorType& e) {
-    // e.printMessage();
-    std::cout << "Error Stop" << std::endl;
-    return (wxThread::ExitCode)-1;
+    std::this_thread::sleep_for(std::chrono::milliseconds(sleeptime));
+    frame->RefreshScreen();
   }
   return (wxThread::ExitCode)0;
 }
@@ -114,31 +101,48 @@ void EQFrame::OnEnable(wxCommandEvent& event) {
   EQControls* controls = main->GetControls();
   if (event.IsChecked()) {
     SetStatusText("AudioEQ is active.");
-    pThread = new IOThread(this, controls);
+    try {
+      controls->adac.openStream(&controls->oParams, &controls->iParams,
+                                RTAUDIO_FLOAT64, 44100, &controls->bufferFrames,
+                                &RWSoundCard, (void*)controls);
+      controls->bufferBytes = controls->bufferFrames * 2 * 8;
+    } catch (RtAudioErrorType& e) {
+      // e.printMessage();
+      std::cout << "Error Open" << std::endl;
+    }
+    try {
+      controls->adac.startStream();
+    } catch (RtAudioErrorType& e) {
+      std::cout << "Error Start" << std::endl;
+      // e.printMessage();
+    }
+    pThread = new RefreshThread(this);
     if (pThread->Run() != wxTHREAD_NO_ERROR) {
       wxLogError("Can't create the thread!");
       delete pThread;
       pThread = NULL;
     }
-
   } else {
     SetStatusText("AudioEQ is not active.");
+    try {
+      controls->adac.stopStream();
+    } catch (RtAudioErrorType& e) {
+      // e.printMessage();
+      std::cout << "Error Stop" << std::endl;
+    }
+    wxCriticalSectionLocker enter(pThreadCS);
+    if (pThread)  // does the thread still exist?
     {
+      wxMessageOutputDebug().Printf("MYFRAME: deleting thread");
+      if (pThread->Delete() != wxTHREAD_NO_ERROR)
+        wxLogError("Can't delete the thread!");
+    }
+    // exit from the critical section to give the thread
+    // the possibility to enter its destructor
+    // (which is guarded with m_pThreadCS critical section!)
+    while (1) {  // was the ~MyThread() function executed?
       wxCriticalSectionLocker enter(pThreadCS);
-      if (pThread)  // does the thread still exist?
-      {
-        wxMessageOutputDebug().Printf("MYFRAME: deleting thread");
-        if (pThread->Delete() != wxTHREAD_NO_ERROR)
-          wxLogError("Can't delete the thread!");
-      }
-    }  // exit from the critical section to give the thread
-       // the possibility to enter its destructor
-       // (which is guarded with m_pThreadCS critical section!)
-    while (1) {
-      {  // was the ~MyThread() function executed?
-        wxCriticalSectionLocker enter(pThreadCS);
-        if (!pThread) break;
-      }
+      if (!pThread) break;
       // wait for thread completion
       wxThread::This()->Sleep(1);
     }
@@ -173,5 +177,61 @@ void EQFrame::OnChangeGain(wxCommandEvent& event) {
     EQ::ChangePNFilter(controls, id, event.GetInt(),
                        EQ::GetPNFreq(controls, id));
   }
+}
+BEGIN_EVENT_TABLE(SpecDrawPane, wxPanel)
+EVT_PAINT(SpecDrawPane::paintEvent)
+END_EVENT_TABLE()
+
+SpecDrawPane::SpecDrawPane(wxPanel* parent) : wxPanel(parent) {}
+
+/*
+ * Called by the system of by wxWidgets when the panel needs
+ * to be redrawn. You can also trigger this call by
+ * calling Refresh()/Update().
+ */
+
+void SpecDrawPane::paintEvent(wxPaintEvent& evt) {
+  wxPaintDC dc(this);
+  render(dc);
+}
+
+void SpecDrawPane::paintNow() {
+  wxClientDC dc(this);
+  render(dc);
+}
+
+/*
+ * Here we do the actual rendering. I put it in a separate
+ * method so that it can work no matter what type of DC
+ * (e.g. wxPaintDC or wxClientDC) is used.
+ */
+void SpecDrawPane::render(wxDC& dc) {
+  // draw a line
+  wxSize size = this->GetSize();
+  EQApp* main = &(wxGetApp());
+  int w = size.GetX();
+  int h = size.GetY();
+  EQControls* cntrls = main->GetControls();
+  unsigned int N = cntrls->bufferFrames / 2;
+  dc.SetPen(wxPen(wxColor(0, 0, 0), 4));
+  dc.DrawRectangle(0, 0, w, h);
+  dc.SetPen(wxPen(wxColor(0, 0, 0), 1));  // black line, 3 pixels thick
+
+  int wd = w - 4;
+  int hd = h - 4;
+  int x0 = 2;
+  int y0 = 2;
+  double gmin = 10;
+  double xscale = ((double)wd / (double)N);
+  double yscale = ((double)hd / (2 * 40));
+  for (std::size_t i = 1; i < N; ++i) {
+    dc.DrawLine(x0 + std::round((i - 1) * xscale),
+                y0 + hd / 2 - std::round(cntrls->magspec[i - 1] * yscale),
+                x0 + std::round(i * xscale),
+                y0 + hd / 2 -
+                    std::round(cntrls->magspec[i] *
+                               yscale));  // draw line across the rectangle
+  }
+  // Look at the wxDC docs to learn how to draw other stuff
 }
 }  // namespace EQ

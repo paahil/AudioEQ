@@ -6,32 +6,38 @@
 #include "EQcontrols.hpp"
 #include "EQfilters.hpp"
 namespace EQ {
-class IOThread;
+class RefreshThread;
+class SpecDrawPane : public wxPanel {
+ public:
+  SpecDrawPane(wxPanel* parent);
+  void paintEvent(wxPaintEvent& evt);
+  void paintNow();
+  void render(wxDC& dc);
+  DECLARE_EVENT_TABLE()
+};
 
 class EQFrame : public wxFrame {
  public:
   EQFrame();
-  IOThread* pThread;
+  RefreshThread* pThread;
   wxCriticalSection pThreadCS;
+  RefreshScreen();
 
  private:
   void OnEnable(wxCommandEvent& event);
   void OnChangeOut(wxCommandEvent& event);
   void OnChangeIn(wxCommandEvent& event);
   void OnChangeGain(wxCommandEvent& event);
+  SpecDrawPane* specplot;
 };
 
-class IOThread : public wxThread {
+class RefreshThread : public wxThread {
  public:
-  IOThread(EQFrame* handler, EQControls* controls) : wxThread() {
-    pHandler = handler;
-    pControls = controls;
-  }
-  ~IOThread();
+  RefreshThread(EQFrame* handler) : wxThread() { pHandler = handler; }
+  ~RefreshThread();
 
  private:
   virtual ExitCode Entry();
-  EQControls* pControls;
   EQFrame* pHandler;
 };
 
@@ -41,9 +47,11 @@ class EQApp : public wxApp {
  public:
   virtual bool OnInit();
   EQControls* GetControls() { return cntrls; }
+  EQFrame* GetEQFrame() { return frame; }
 
  private:
   EQControls* cntrls;
+  EQFrame* frame;
 };
 
 wxDECLARE_APP(EQApp);

@@ -115,6 +115,9 @@ void Filter(EQControls* cntrls, double* input, unsigned int filter,
       w1[i] = num[1] * input[i] - den[1] * output[i] + w2[i - 1];
     }
     w2[i] = num[2] * input[i] - den[2] * output[i];
+    if (output[i] > 1.0) {
+      output[i] = 1.0;
+    }
   }
   cntrls->previousSamples[filter][channel][0] = w1[inputsize - 1];
   cntrls->previousSamples[filter][channel][1] = w2[inputsize - 1];

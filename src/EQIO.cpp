@@ -1,16 +1,61 @@
 #include "EQIO.hpp"
 
 #include <chrono>
+#include <cmath>
+#include <complex>
+#include <csignal>
 #include <iostream>
 #include <vector>
 
 #include "EQcontrols.hpp"
 #include "EQfilters.hpp"
 namespace EQ {
+unsigned int BitReverse(unsigned int x, int log2n) {
+  int n = 0;
+  int mask = 0x1;
+  for (int i = 0; i < log2n; i++) {
+    n <<= 1;
+    n |= (x & 1);
+    x >>= 1;
+  }
+  return n;
+}
+
+void CalculateSpectrum(EQControls *cntrls, double *sig, unsigned int len) {
+  typedef std::complex<double> cmplx;
+  const cmplx J(0, 1);
+  const double PI = 3.1415926536;
+  unsigned int flen = len / 2;
+  unsigned int log2n = std::log2(len);
+  cmplx b[len];
+
+  unsigned int n = 1 << log2n;
+  for (unsigned int i = 0; i < n; ++i) {
+    b[BitReverse(i, log2n)] = sig[i];
+  }
+  for (int s = 1; s <= log2n; ++s) {
+    int m = 1 << s;
+    int m2 = m >> 1;
+    cmplx w(1, 0);
+    cmplx wm = exp(-J * (PI / m2));
+    for (int j = 0; j < m2; ++j) {
+      for (int k = j; k < n; k += m) {
+        cmplx t = w * b[k + m2];
+        cmplx u = b[k];
+        b[k] = u + t;
+        b[k + m2] = u - t;
+      }
+      w = w * wm;
+    }
+  }
+  for (unsigned int k = 0; k < flen; k++) {
+    cntrls->magspec[k] = 20 * std::log10(std::abs(b[k]));
+  }
+}
+
 int RWSoundCard(void *outputBuffer, void *inputBuffer,
                 unsigned int nBufferFrames, double streamTime,
                 RtAudioStreamStatus status, void *data) {
-  auto start = std::chrono::steady_clock::now();
   if (status) std::cout << "Stream over/underflow detected." << std::endl;
   EQControls *cntrls = (EQControls *)data;
   unsigned int bytes = nBufferFrames * 2 * 8;
@@ -19,13 +64,7 @@ int RWSoundCard(void *outputBuffer, void *inputBuffer,
   memcpy(input, inputBuffer, bytes);
   double channel1[SIZE / 2];
   double channel2[SIZE / 2];
-  /*auto istop = std::chrono::steady_clock::now();
-  std::cout << "INIT: "
-            << std::chrono::duration_cast<std::chrono::nanoseconds>(istop -
-                                                                    start)
-                   .count()
-            << " ns" << std::endl;
-  auto cstart = std::chrono::steady_clock::now();*/
+
   for (unsigned int i = 0; i < SIZE; i++) {
     if (i % 2 == 0) {
       channel1[i / 2] = input[i];
@@ -34,24 +73,14 @@ int RWSoundCard(void *outputBuffer, void *inputBuffer,
     }
   }
 
-  /*auto cstop = std::chrono::steady_clock::now();
-  std::cout << ", Channel split: "
-            << std::chrono::duration_cast<std::chrono::nanoseconds>(cstop -
-                                                                    cstart)
-                   .count()
-            << " ns" << std::endl;*/
-  auto fstart = std::chrono::steady_clock::now();
   for (int i = 0; i < cntrls->filternum; i++) {
     Filter(cntrls, channel1, i, 0, SIZE / 2);
     Filter(cntrls, channel2, i, 1, SIZE / 2);
   }
-  auto fstop = std::chrono::steady_clock::now();
-  /*std::cout << ", Filtering: "
-            << std::chrono::duration_cast<std::chrono::nanoseconds>(fstop -
-                                                                    fstart)
-                   .count()
-            << " ns" << std::endl; /*
-   auto ostart = std::chrono::steady_clock::now();*/
+  if (streamTime > cntrls->lastupdt + (double)(1 / (cntrls->FPS))) {
+    CalculateSpectrum(cntrls, channel1, SIZE / 2);
+    // std::cout << "joo\n";
+  }
   double output[SIZE];
   for (unsigned int i = 0; i < SIZE; i++) {
     if (i % 2 == 0) {
@@ -60,19 +89,7 @@ int RWSoundCard(void *outputBuffer, void *inputBuffer,
       output[i] = channel2[i / 2];
     }
   }
-
   memcpy(outputBuffer, output, bytes);
-  auto stop = std::chrono::steady_clock::now();
-  /* std::cout << ", Output Formatting: "
-             << std::chrono::duration_cast<std::chrono::nanoseconds>(stop -
-                                                                     ostart)
-                    .count()
-             << " ns" << std::endl;*/
-  /*std::cout << ", TOTAL: "
-            << std::chrono::duration_cast<std::chrono::nanoseconds>(stop -
-                                                                    start)
-                   .count()
-            << " ns" << std::endl;*/
   return 0;
 }
 

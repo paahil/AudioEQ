@@ -7,10 +7,10 @@
 namespace EQ {
 enum FiltTypes { LShelf, HShelf, ParamEQ };
 
-const int LowCoFreq = 120;
-const int HighCoFreq = 12000;
+const int LowCoFreq = 80;
+const int HighCoFreq = 10240;
 const int MidBand = HighCoFreq - LowCoFreq;
-const double QFact = 4.0;
+const double QFact = 8.0;
 const unsigned int FS = 44100;
 const double pi = 3.14159265358979323846;
 
@@ -28,8 +28,12 @@ struct EQControls {
   int inputnum;                       // Number of input devices
   RtAudio::StreamParameters oParams;  // Output paremetres
   RtAudio::StreamParameters iParams;  // Input parametres
-  unsigned int bufferFrames = 512;
+  unsigned int bufferFrames = 1024;
   unsigned int bufferBytes = 0;
+  // Vector for the magnitude spectrum of the output (dB)
+  std::vector<double> magspec;
+  double lastupdt = 0;    // Last previous timestamp for screen refresh
+  unsigned int FPS = 20;  // Refresh rate
 };
 
 void ChangeInputDevice(EQControls* cntrls, int id);
