@@ -10,7 +10,7 @@ enum FiltTypes { LShelf, HShelf, ParamEQ };
 const int LowCoFreq = 80;
 const int HighCoFreq = 10240;
 const int MidBand = HighCoFreq - LowCoFreq;
-const double QFact = 8.0;
+const double QFact = 1.0;
 const unsigned int FS = 44100;
 const double pi = 3.14159265358979323846;
 

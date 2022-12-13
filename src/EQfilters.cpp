@@ -75,7 +75,7 @@ void ChangePNFilter(EQControls* cntrls, unsigned int index, double gaindB,
   num.push_back(std::sqrt(gain) + gain * std::tan(angcofreq / (2 * QFact)));
   num.push_back(-2 * std::sqrt(gain) * std::cos(angcofreq));
   num.push_back(std::sqrt(gain) - gain * std::tan(angcofreq / (2 * QFact)));
-  den.push_back(std::sqrt(gain) + gain * std::tan(angcofreq / (2 * QFact)));
+  den.push_back(std::sqrt(gain) + std::tan(angcofreq / (2 * QFact)));
   den.push_back(-2 * std::sqrt(gain) * std::cos(angcofreq));
   den.push_back(std::sqrt(gain) - std::tan(angcofreq / (2 * QFact)));
   num[0] = num[0] / den[0];
@@ -92,8 +92,7 @@ void ChangePNFilter(EQControls* cntrls, unsigned int index, double gaindB,
 }
 
 double GetPNFreq(EQControls* cntrls, unsigned int index) {
-  double freq =
-      EQ::LowCoFreq + (index) * (EQ::MidBand / (cntrls->filternum - 1.0));
+  double freq = EQ::LowCoFreq * std::pow(2.0, index);
   return freq;
 }
 
