@@ -77,7 +77,7 @@ EQFrame::EQFrame() : wxFrame(NULL, wxID_ANY, "AudioEQ") {
   framesizer->SetSizeHints(this);
 }
 
-EQFrame::RefreshScreen() { specplot->paintNow(); }
+void EQFrame::RefreshScreen() { specplot->paintNow(); }
 
 RefreshThread::~RefreshThread() {
   wxCriticalSectionLocker enter(pHandler->pThreadCS);
@@ -206,31 +206,64 @@ void SpecDrawPane::paintNow() {
  * (e.g. wxPaintDC or wxClientDC) is used.
  */
 void SpecDrawPane::render(wxDC& dc) {
-  // draw a line
   wxSize size = this->GetSize();
   EQApp* main = &(wxGetApp());
-  int w = size.GetX();
-  int h = size.GetY();
   EQControls* cntrls = main->GetControls();
   unsigned int N = cntrls->bufferFrames / 2;
-  dc.SetPen(wxPen(wxColor(0, 0, 0), 4));
-  dc.DrawRectangle(0, 0, w, h);
-  dc.SetPen(wxPen(wxColor(0, 0, 0), 1));  // black line, 3 pixels thick
 
-  int wd = w - 4;
-  int hd = h - 4;
-  int x0 = 2;
-  int y0 = 2;
-  double gmin = 10;
-  double xscale = ((double)wd / (double)N);
-  double yscale = ((double)hd / (2 * 40));
+  int w = size.GetX();
+  int h = size.GetY();
+  int xtickh = 60;
+  int ytickw = 60;
+
+  int bw = 3;  // Figure boreder width (must be odd)
+  int fx0 = ytickw + 1;
+  int fw = w - fx0 - (bw - 1) / 2;
+  int fy0 = (bw - 1) / 2;
+  int fh = h - xtickh - fy0 - (bw - 1) / 2;
+  dc.SetPen(wxPen(wxColor(128, 128, 128), bw));
+  dc.DrawRectangle(fx0, fy0, fw, fh);
+
+  dc.SetPen(wxPen(wxColor(0, 0, 0), 1));  // black line, 1 pixel thick
+  int x0 = fx0 + 1 + (bw - 1) / 2;
+  int y0 = fy0 + 1 + (bw - 1) / 2;
+  int wd = fw + fx0 - x0 - (1 + (bw - 1) / 2);
+  int hd = fh + fy0 - y0 - (1 + (bw - 1) / 2);
+
+  double gmin = -100;   //(dB)
+  double gmax = -20;    //(dB)
+  double fmin = 20;     //(Hz)
+  double fmax = 20000;  //(Hz)
+
+  double logfmin = std::log2(fmin);
+  double logfmax = std::log2(fmax);
+  double xscale = (double)wd / (logfmax - logfmin);
+  double fscale = (0.5 * FS) / N;
+  double yscale = (double)hd / (gmax - gmin);
+  int x1, x2, y1, y2;
   for (std::size_t i = 1; i < N; ++i) {
-    dc.DrawLine(x0 + std::round((i - 1) * xscale),
-                y0 + hd / 2 - std::round(cntrls->magspec[i - 1] * yscale),
-                x0 + std::round(i * xscale),
-                y0 + hd / 2 -
-                    std::round(cntrls->magspec[i] *
-                               yscale));  // draw line across the rectangle
+    y2 = y0 - std::round((cntrls->magspec[i] - gmax) * yscale);
+    y1 = y0 - std::round((cntrls->magspec[i - 1] - gmax) * yscale);
+    x2 = x0 + std::round((std::log2(i * fscale) - logfmin) * xscale);
+    if (i == 1) {
+      y1 = y1 + std::round(x0 * ((double)(y2 - y1) / (double)(x2)));
+      x1 = x0;
+    } else {
+      x1 = x0 + std::round((std::log2((i - 1) * fscale) - logfmin) * xscale);
+    }
+    if (x2 > x0 + wd) {
+      y2 = y0 + hd;
+      x2 = x0 + wd;
+    }
+    if (y1 > y0 + hd) {
+      y1 = y0 + hd;
+    }
+    if (y2 > y0 + hd) {
+      y2 = y0 + hd;
+    }
+    if (!(x1 > x0 + wd)) {
+      dc.DrawLine(x1, y1, x2, y2);
+    }
   }
   // Look at the wxDC docs to learn how to draw other stuff
 }

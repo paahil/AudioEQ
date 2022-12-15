@@ -1,3 +1,0 @@
-"C:\Program Files\CMake\bin\cmake.exe" -E rm -f CMakeFiles\utility_functions.dir/objects.a
-C:\msys64\mingw64\bin\ar.exe qc CMakeFiles\utility_functions.dir/objects.a @CMakeFiles\utility_functions.dir\objects1.rsp
-C:\msys64\mingw64\bin\g++.exe  -std=gnu++0x -Wl,--whole-archive CMakeFiles\utility_functions.dir/objects.a -Wl,--no-whole-archive -o utility_functions.exe -Wl,--out-implib,libutility_functions.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\utility_functions.dir\linklibs.rsp

@@ -38,8 +38,8 @@ void CalculateSpectrum(EQControls *cntrls, double *sig, unsigned int len) {
     int m2 = m >> 1;
     cmplx w(1, 0);
     cmplx wm = exp(-J * (PI / m2));
-    for (int j = 0; j < m2; ++j) {
-      for (int k = j; k < n; k += m) {
+    for (unsigned int j = 0; j < m2; ++j) {
+      for (unsigned int k = j; k < n; k += m) {
         cmplx t = w * b[k + m2];
         cmplx u = b[k];
         b[k] = u + t;
@@ -49,7 +49,7 @@ void CalculateSpectrum(EQControls *cntrls, double *sig, unsigned int len) {
     }
   }
   for (unsigned int k = 0; k < flen; k++) {
-    cntrls->magspec[k] = 20 * std::log10(std::abs(b[k]));
+    cntrls->magspec[k] = 20 * std::log10(std::abs(b[k]) / len);
   }
 }
 

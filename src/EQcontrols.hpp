@@ -10,7 +10,7 @@ enum FiltTypes { LShelf, HShelf, ParamEQ };
 const int LowCoFreq = 80;
 const int HighCoFreq = 10240;
 const int MidBand = HighCoFreq - LowCoFreq;
-const double QFact = 1.0;
+const double QFact = 2.0;
 const unsigned int FS = 44100;
 const double pi = 3.14159265358979323846;
 
@@ -24,11 +24,11 @@ struct EQControls {
       filters;  // vector of pairs containing numerator and denominator
                 // coeficcients
   RtAudio adac = RtAudio();
-  int outputnum;                      // Number of output devices
-  int inputnum;                       // Number of input devices
-  RtAudio::StreamParameters oParams;  // Output paremetres
-  RtAudio::StreamParameters iParams;  // Input parametres
-  unsigned int bufferFrames = 1024;
+  int outputnum;                         // Number of output devices
+  int inputnum;                          // Number of input devices
+  RtAudio::StreamParameters oParams;     // Output paremetres
+  RtAudio::StreamParameters iParams;     // Input parametres
+  unsigned int bufferFrames = 2 * 1024;  // Number of samples (1024 per channel)
   unsigned int bufferBytes = 0;
   // Vector for the magnitude spectrum of the output (dB)
   std::vector<double> magspec;

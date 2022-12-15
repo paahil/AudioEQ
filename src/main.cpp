@@ -7,8 +7,8 @@ wxIMPLEMENT_APP(EQApp);
 bool EQApp::OnInit() {
   cntrls = new EQControls();
   cntrls->filternum = 8;
-  std::vector<double> zero(cntrls->bufferFrames / 2, 0.0);
-  cntrls->magspec = zero;
+  std::vector<double> noise(cntrls->bufferFrames / 2, -100.0);
+  cntrls->magspec = noise;
   frame = new EQFrame();
   frame->Show(true);
   return true;

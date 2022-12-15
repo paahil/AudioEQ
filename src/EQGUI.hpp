@@ -21,7 +21,7 @@ class EQFrame : public wxFrame {
   EQFrame();
   RefreshThread* pThread;
   wxCriticalSection pThreadCS;
-  RefreshScreen();
+  void RefreshScreen();
 
  private:
   void OnEnable(wxCommandEvent& event);
