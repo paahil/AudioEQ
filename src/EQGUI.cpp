@@ -210,61 +210,121 @@ void SpecDrawPane::render(wxDC& dc) {
   EQApp* main = &(wxGetApp());
   EQControls* cntrls = main->GetControls();
   unsigned int N = cntrls->bufferFrames / 2;
+  // Figure option variables
+  int bw = 3;      // Figure border width (must be odd)
+  int xtickn = 4;  // Number of ticks on the x-axis per decade.
+  int ytickn = 4;  // Number of ticks on the y-axis
 
-  int w = size.GetX();
-  int h = size.GetY();
-  int xtickh = 60;
-  int ytickw = 60;
+  // Figure position variables
+  int w = size.GetX();  // Total width of the panel
+  int h = size.GetY();  // Total height of the panel
+  int indentl = 40;     // Figure indent from left (outer border)
+  int indentr = 20;     // Figure indent from right (outer border)
+  int indentu = 10;     // Figure indent from above (outer border)
+  int indentd = 40;     // Figure indent from below (outer border)
 
-  int bw = 3;  // Figure boreder width (must be odd)
-  int fx0 = ytickw + 1;
-  int fw = w - fx0 - (bw - 1) / 2;
-  int fy0 = (bw - 1) / 2;
-  int fh = h - xtickh - fy0 - (bw - 1) / 2;
+  // Plot limits
+  double mmin = -100;   // Lower limit of the magnitude (dB)
+  double mmax = -20;    // Upper limit of the magnitude (dB)
+  double fmin = 20;     // Lower limit of the frequency (Hz) (Must be >0)
+  double fmax = 20000;  // Upper limit of the frequency (Hz)
+
+  // Figure border rectangle calculation
+  int fx0 = indentl;                          // Upper left corner (x)
+  int fy0 = (bw - 1) / 2 + indentu;           // Upper left corner (y)
+  int fw = w - fx0 - (bw - 1) / 2 - indentr;  // Width
+  int fh = h - fy0 - (bw - 1) / 2 - indentd;  // Heigth
+
+  // Plotting area calculation (inside the figure borders)
+  int x0 = fx0 + (bw - 1) / 2 + 1;       // Upper left corner (x)
+  int y0 = fy0 + (bw - 1) / 2 + 1;       // Upper left corner (y)
+  int wp = fw - 2 * (1 + (bw - 1) / 2);  // Width
+  int hp = fh - 2 * (1 + (bw - 1) / 2);  // Heigth
+
+  // Plotting coefficient calculation
+  double logfmin = std::log10(fmin);      // Lower frequency limit in log10
+  double logfmax = std::log10(fmax);      // Upper frequency limit in log10
+  double fsc = (0.5 * FS) / N;            // From FFT index to frequency
+  double xsc = wp / (logfmax - logfmin);  // From frequency to pixels
+  double ysc = hp / (mmax - mmin);        // From magnitude to pixels
+
+  // Tick constant definitons
+  int ticke = 5;   // Number of pixels the tick lines extend outside the figure
+  int tickg = 3;   // Gap between the line and value label
+  int tickw = 20;  // Tick value label bounding rectangle width
+  int tickh = 11;  // Tick value label bounding rectangle height
+
+  // Tick line plotting coeficcients
+  int ticky0 = fy0 + fh + ticke + (bw - 1) / 2;  // Constant y value for x lines
+  int tickx0 = fx0 - ticke - (bw - 1) / 2;       // Constant x value for y lines
+  double tickxsc = (double)wp / (logfmax - logfmin);  // From index to pixel
+  double xlinsc = 10.0 / xtickn;
+  double tickysc = hp / ytickn;  // From index to pixel
+  double lblysc = (mmax - mmin) / ytickn;
+  // Draw the figure bounding rectangle
   dc.SetPen(wxPen(wxColor(128, 128, 128), bw));
   dc.DrawRectangle(fx0, fy0, fw, fh);
 
-  dc.SetPen(wxPen(wxColor(0, 0, 0), 1));  // black line, 1 pixel thick
-  int x0 = fx0 + 1 + (bw - 1) / 2;
-  int y0 = fy0 + 1 + (bw - 1) / 2;
-  int wd = fw + fx0 - x0 - (1 + (bw - 1) / 2);
-  int hd = fh + fy0 - y0 - (1 + (bw - 1) / 2);
+  // Draw the tick lines and labels
+  wxString ticklbl;
+  dc.SetPen(wxPen(wxColor(128, 128, 128), 1, wxPENSTYLE_LONG_DASH));
+  if (indentl >= tickw + ticke + tickg) {
+    for (int i = 0; i <= ytickn; i++) {
+      dc.DrawLine(tickx0, y0 + i * tickysc, x0 + wp, y0 + i * tickysc);
+      double yval = mmax - std::round(i * lblysc);
+      int tx0 = tickx0 - tickg - tickw;
+      int ty0 = y0 + i * tickysc - tickh / 2;
+      ticklbl << yval;
+      dc.DrawLabel(ticklbl, wxRect(tx0, ty0, tickw, tickh));
+      ticklbl.Clear();
+    }
+  }
+  if (indentd >= tickh + ticke + tickg) {
+    for (int j = 0; j <= logfmax - logfmin; j++) {
+      for (int i = 0; i < xtickn; i++) {
+        double xval = std::round(std::pow(10, (logfmin + j)) * i * xlinsc);
+        if (i == 0) {
+          xval = std::round(std::pow(10, (logfmin + j)));
+        }
+        int xpos = x0 + (std::log10(xval) - logfmin) * tickxsc;
+        if (xpos <= fx0 + fw && xpos >= fx0) {
+          dc.DrawLine(xpos, ticky0, xpos, y0);
+          int tx0 = xpos - tickw / 2;
+          int ty0 = ticky0 + tickg;
+          ticklbl << xval;
+          dc.DrawLabel(ticklbl, wxRect(tx0, ty0, tickw, tickh), wxALIGN_CENTER);
+          ticklbl.Clear();
+        }
+      }
+    }
+  }
 
-  double gmin = -100;   //(dB)
-  double gmax = -20;    //(dB)
-  double fmin = 20;     //(Hz)
-  double fmax = 20000;  //(Hz)
-
-  double logfmin = std::log2(fmin);
-  double logfmax = std::log2(fmax);
-  double xscale = (double)wd / (logfmax - logfmin);
-  double fscale = (0.5 * FS) / N;
-  double yscale = (double)hd / (gmax - gmin);
+  // Draw the spectrum
+  dc.SetPen(wxPen(wxColor(0, 0, 0), 1));
   int x1, x2, y1, y2;
-  for (std::size_t i = 1; i < N; ++i) {
-    y2 = y0 - std::round((cntrls->magspec[i] - gmax) * yscale);
-    y1 = y0 - std::round((cntrls->magspec[i - 1] - gmax) * yscale);
-    x2 = x0 + std::round((std::log2(i * fscale) - logfmin) * xscale);
+  for (unsigned int i = 1; i < N; ++i) {
+    y2 = y0 - std::round((cntrls->magspec[i] - mmax) * ysc);
+    y1 = y0 - std::round((cntrls->magspec[i - 1] - mmax) * ysc);
+    x2 = x0 + std::round((std::log10(i * fsc) - logfmin) * xsc);
     if (i == 1) {
       y1 = y1 + std::round(x0 * ((double)(y2 - y1) / (double)(x2)));
       x1 = x0;
     } else {
-      x1 = x0 + std::round((std::log2((i - 1) * fscale) - logfmin) * xscale);
+      x1 = x0 + std::round((std::log10((i - 1) * fsc) - logfmin) * xsc);
     }
-    if (x2 > x0 + wd) {
-      y2 = y0 + hd;
-      x2 = x0 + wd;
+    if (x2 > x0 + wp) {
+      y2 = y0 + hp;
+      x2 = x0 + wp;
     }
-    if (y1 > y0 + hd) {
-      y1 = y0 + hd;
+    if (y1 > y0 + hp) {
+      y1 = y0 + hp;
     }
-    if (y2 > y0 + hd) {
-      y2 = y0 + hd;
+    if (y2 > y0 + hp) {
+      y2 = y0 + hp;
     }
-    if (!(x1 > x0 + wd)) {
+    if (!(x1 > x0 + wp)) {
       dc.DrawLine(x1, y1, x2, y2);
     }
   }
-  // Look at the wxDC docs to learn how to draw other stuff
 }
 }  // namespace EQ
