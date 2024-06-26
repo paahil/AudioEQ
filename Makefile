@@ -23,9 +23,7 @@ $(patsubst $(WXLIB)/%.dll, $(BASEDIR)/$(BUILDDIR)/%.dll, $(wildcard $(WXLIB)/*.d
 all : makelibs makedirs buildexe clean
 
 makelibs:
-	cmake -S $(BASEDIR)/libs/aquila -B $(AQBUILD) -G"MinGW Makefiles"
 	cmake -S $(BASEDIR)/libs/rtaudio -B $(RTBUILD)  -G"MinGW Makefiles"
-	cd $(AQBUILD) && $(MAKE)
 	cd $(RTBUILD) && $(MAKE)
 	cd $(WXBUILD)/msw && $(MAKE) -f makefile.gcc BUILD=release SHARED=1
 
