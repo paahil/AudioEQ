@@ -101,21 +101,7 @@ void EQFrame::OnEnable(wxCommandEvent& event) {
   EQControls* controls = main->GetControls();
   if (event.IsChecked()) {
     SetStatusText("AudioEQ is active.");
-    try {
-      controls->adac.openStream(&controls->oParams, &controls->iParams,
-                                RTAUDIO_FLOAT64, 44100, &controls->bufferFrames,
-                                &RWSoundCard, (void*)controls);
-      controls->bufferBytes = controls->bufferFrames * 2 * 8;
-    } catch (RtAudioErrorType& e) {
-      // e.printMessage();
-      std::cout << "Error Open" << std::endl;
-    }
-    try {
-      controls->adac.startStream();
-    } catch (RtAudioErrorType& e) {
-      std::cout << "Error Start" << std::endl;
-      // e.printMessage();
-    }
+    ToggleEQ(controls, ToggleEQenum::On);
     pThread = new RefreshThread(this);
     if (pThread->Run() != wxTHREAD_NO_ERROR) {
       wxLogError("Can't create the thread!");
@@ -124,12 +110,7 @@ void EQFrame::OnEnable(wxCommandEvent& event) {
     }
   } else {
     SetStatusText("AudioEQ is not active.");
-    try {
-      controls->adac.stopStream();
-    } catch (RtAudioErrorType& e) {
-      // e.printMessage();
-      std::cout << "Error Stop" << std::endl;
-    }
+    ToggleEQ(controls, ToggleEQenum::Off);
     wxCriticalSectionLocker enter(pThreadCS);
     if (pThread)  // does the thread still exist?
     {

@@ -96,29 +96,23 @@ int RWSoundCard(void *outputBuffer, void *inputBuffer,
 int ToggleEQ(EQControls *cntrls, ToggleEQenum a) {
   switch (a) {
     case On:
-      try {
-        cntrls->adac.openStream(&cntrls->oParams, &cntrls->iParams,
-                                RTAUDIO_FLOAT64, 44100, &cntrls->bufferFrames,
-                                &RWSoundCard, (void *)cntrls);
-        cntrls->bufferBytes = cntrls->bufferFrames * 2 * 8;
-        std::cout << cntrls->bufferBytes << std::endl;
-      } catch (RtAudioErrorType &e) {
+      if (cntrls->adac.openStream(&cntrls->oParams, &cntrls->iParams,
+                                  RTAUDIO_FLOAT64, 44100, &cntrls->bufferFrames,
+                                  &RWSoundCard, (void *)cntrls)) {
         // e.printMessage();
         std::cout << "Error Open" << std::endl;
         return -1;
       }
-      try {
-        cntrls->adac.startStream();
-      } catch (RtAudioErrorType &e) {
+      cntrls->bufferBytes = cntrls->bufferFrames * 2 * 8;
+      std::cout << cntrls->bufferBytes << std::endl;
+      if (cntrls->adac.startStream()) {
         std::cout << "Error Start" << std::endl;
         // e.printMessage();
         return -1;
       }
       break;
     case Off:
-      try {
-        cntrls->adac.stopStream();
-      } catch (RtAudioErrorType &e) {
+      if (cntrls->adac.stopStream()) {
         // e.printMessage();
         std::cout << "Error Stop" << std::endl;
         return -1;

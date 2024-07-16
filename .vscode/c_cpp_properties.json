@@ -7,7 +7,6 @@
                 "${workspaceFolder}/libs/wxWidgets/lib/gcc_dll/mswu",
                 "${workspaceFolder}/libs/wxWidgets/include",
                 "${workspaceFolder}/libs/rtaudio",
-                "${workspaceFolder}/libs/aquila/aquila",
                 "${workspaceFolder}/libs/wxWidgets/lib/gcc_dll/mswu"
             ],
             "defines": [
@@ -15,7 +14,7 @@
                 "UNICODE",
                 "_UNICODE"
             ],
-            "compilerPath": "C:\\msys64\\mingw64\\bin\\gcc.exe",
+            "compilerPath": "C:\\msys64\\mingw64\\bin\\g++.exe",
             "cStandard": "gnu17",
             "cppStandard": "gnu++17",
             "intelliSenseMode": "windows-gcc-x64"
