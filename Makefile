@@ -1,5 +1,5 @@
-CXXFLAGS := -std=c++17 -g -Wall -Wextra -Wno-missing-field-initializers
-CPPFLAGS := -c
+CXXFLAGS := -std=c++11 -g -Wall -Wextra -Wno-missing-field-initializers
+CPPFLAGS := -c -D__WINDOWS_ASIO__
 
 EXE:=AudioEQ.exe
 BASEDIR = $(CURDIR)
@@ -56,6 +56,6 @@ clean:
 buildaudiotest: $(BASEDIR)/test/thrputtest.exe
 
 $(BASEDIR)/test/thrputtest.exe: $(BASEDIR)/test/thrputtest.o
-	$(CXX) $(BASEDIR)/test/thrputtest.o -o $(BASEDIR)/test/thrputtest.exe -L$(RTBUILD) -lrtaudio 
+	$(CXX) $(BASEDIR)/test/thrputtest.o -o $(BASEDIR)/test/thrputtest.exe -L$(RTBUILD) -lrtaudio
 $(BASEDIR)/test/thrputtest.o: $(BASEDIR)/test/thrputtest.cpp
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< -o $@ -I$(RTINCLUDE)
