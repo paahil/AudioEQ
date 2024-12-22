@@ -1,10 +1,11 @@
 #ifndef EQGUI_HPP
 #define EQGUI_HPP
-#include <wx/wx.h>
+#include <gtk/gtk.h>
 
 #include "EQIO.hpp"
 #include "EQcontrols.hpp"
 #include "EQfilters.hpp"
+
 namespace EQ {
 class RefreshThread;
 class SpecDrawPane : public wxPanel {

@@ -4,19 +4,17 @@
             "name": "Win32",
             "includePath": [
                 "${default}",
-                "${workspaceFolder}/libs/wxWidgets/lib/gcc_dll/mswu",
-                "${workspaceFolder}/libs/wxWidgets/include",
                 "${workspaceFolder}/libs/rtaudio",
-                "${workspaceFolder}/libs/wxWidgets/lib/gcc_dll/mswu"
+                "C:\\msys64\\mingw64\\include\\gtk-4.0"
             ],
             "defines": [
                 "_DEBUG",
                 "UNICODE",
                 "_UNICODE"
             ],
-            "compilerPath": "C:\\msys64\\mingw64\\bin\\g++.exe",
-            "cStandard": "gnu17",
-            "cppStandard": "gnu++17",
+            "compilerPath": "C:/msys64/mingw64/bin/gcc.exe",
+            "cStandard": "c99",
+            "cppStandard": "c++17",
             "intelliSenseMode": "windows-gcc-x64"
         }
     ],
