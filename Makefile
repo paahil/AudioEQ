@@ -1,5 +1,5 @@
-CXXFLAGS := -std=c++11 -g -Wall -Wextra -Wno-missing-field-initializers
-CPPFLAGS := -c -D__WINDOWS_ASIO__
+CXXFLAGS := -std=c++17
+CPPFLAGS := -DUNICODE -D__WINDOWS_ASIO__
 
 EXE:=AudioEQ.exe
 BASEDIR = $(CURDIR)
@@ -7,41 +7,30 @@ BASEDIR = $(CURDIR)
 RTBUILD := $(BASEDIR)/libs/rtaudio/build
 RTINCLUDE := $(BASEDIR)/libs/rtaudio
 
-WXLIB := $(BASEDIR)/libs/wxWidgets/lib/gcc_dll
-WXBUILD := $(BASEDIR)/libs/wxWidgets/build
-WXMAIN := $(WXLIB)/mswu
-WXINCLUDE := $(BASEDIR)/libs/wxWidgets/include
+GUIDIR := $(BASEDIR)/libs/imgui
+GUISRC := $(subst \,/,$(GUIDIR)/imgui.cpp) $(subst \,/,$(GUIDIR)/imgui_draw.cpp) $(subst \,/, $(GUIDIR)/imgui_tables.cpp) $(subst \,/,$(GUIDIR)/imgui_widgets.cpp)
+GUIBESRC := $(subst \,/,$(wildcard $(GUIDIR)/backends/imgui_impl_opengl3.cpp)) $(subst \,/,$(wildcard $(GUIDIR)/backends/imgui_impl_win32.cpp))
 BUILDDIR := build
 OBJDIR := obj
 SRCDIR := src
-WXLDLIBS := -lwxjpeg -lwxexpat -lwxmsw31u_adv -lwxbase31u -lwxbase31u_xml -lwxbase31u_net -lwxmsw31u_core -mwindows
-LDLIBS := -L$(WXLIB) $(WXLDLIBS) -L$(RTBUILD) -lrtaudio 
-SRCS := $(shell dir  $(subst /,\,$(BASEDIR)/$(SRCDIR)) /s /b | findstr /i .cpp)
+GUILIBS := --static -mwindows -lopengl32 -lgdi32 -ldwmapi 
+LDLIBS := $(GUILIBS) -L$(RTBUILD) -lrtaudio 
+SRCS :=  $(subst \,/,$(wildcard $(BASEDIR)/$(SRCDIR)/*.cpp)) $(GUISRC) $(GUIBESRC)    
 OBJS := $(patsubst $(BASEDIR)/$(SRCDIR)/%.cpp, $(BASEDIR)/$(OBJDIR)/%.o, $(subst \,/,$(SRCS)))
-DESTDLLS := $(patsubst $(RTBUILD)/%.dll, $(BASEDIR)/$(BUILDDIR)/%.dll, $(wildcard $(RTBUILD)/*.dll))\
-$(patsubst $(WXLIB)/%.dll, $(BASEDIR)/$(BUILDDIR)/%.dll, $(wildcard $(WXLIB)/*.dll))
-all : makelibs makedirs buildexe clean
+DESTDLLS := $(patsubst $(RTBUILD)/%.dll, $(BASEDIR)/$(BUILDDIR)/%.dll, $(wildcard $(RTBUILD)/*.dll))
+all : makelibs makedir buildexe copydlls
 
 makelibs:
 	cmake -S $(BASEDIR)/libs/rtaudio -B $(RTBUILD)  -G"MinGW Makefiles"
 	cd $(RTBUILD) && $(MAKE)
-	cd $(WXBUILD)/msw && $(MAKE) -f makefile.gcc BUILD=release SHARED=1
 
-makedirs:
+makedir:
 	if not exist $(BUILDDIR) mkdir $(BUILDDIR)
-	if not exist $(OBJDIR) mkdir $(OBJDIR)
-	echo $(OBJS)
-
 
 buildexe: $(BASEDIR)/$(BUILDDIR)/$(EXE)
 	$(MAKE) copydlls
-$(BASEDIR)/$(BUILDDIR)/$(EXE): $(OBJS)
-	$(CXX) $^ -o $@ $(LDLIBS) 
-
-$(BASEDIR)/$(OBJDIR)/%.o: $(BASEDIR)/$(SRCDIR)/%.cpp
-	if not exist $(patsubst $(BASEDIR)/%, "%",$(dir $@)) mkdir $(patsubst $(BASEDIR)/%,"%",$(dir $@))
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< -o $@ -I$(WXMAIN) -I$(RTINCLUDE) -I$(WXINCLUDE) 
-
+$(BASEDIR)/$(BUILDDIR)/$(EXE): $(SRCS)
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -I$(RTINCLUDE) -I$(GUIDIR) -I$(GUIDIR)/backends  $^ -o $@ $(LDLIBS) 
 
 copydlls: $(DESTDLLS)
 

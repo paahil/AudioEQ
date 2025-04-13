@@ -73,7 +73,16 @@
         "stop_token": "cpp",
         "thread": "cpp",
         "*.ipp": "cpp",
-        "cfenv": "cpp"
+        "cfenv": "cpp",
+        "*.inc": "cpp",
+        "*.rh": "cpp",
+        "charconv": "cpp",
+        "optional": "cpp",
+        "format": "cpp",
+        "span": "cpp",
+        "text_encoding": "cpp",
+        "valarray": "cpp",
+        "variant": "cpp"
     },
     "idf.espIdfPathWin": "C:/Espressif/frameworks/esp-idf-v4.4/",
     "idf.pythonBinPathWin": "C:/Ohjelmointi/Espressif/python_env/idf4.4_py3.8_env/Scripts/python.exe",

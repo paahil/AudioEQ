@@ -1,60 +1,34 @@
 #ifndef EQGUI_HPP
 #define EQGUI_HPP
-#include <gtk/gtk.h>
 
-#include "EQIO.hpp"
-#include "EQcontrols.hpp"
+#include <GL/GL.h>
+#include <tchar.h>
+#include <windows.h>
+
 #include "EQfilters.hpp"
+#include "imgui.h"
+#include "imgui_impl_opengl3.h"
+#include "imgui_impl_win32.h"
 
-namespace EQ {
-class RefreshThread;
-class SpecDrawPane : public wxPanel {
- public:
-  SpecDrawPane(wxPanel* parent);
-  void paintEvent(wxPaintEvent& evt);
-  void paintNow();
-  void render(wxDC& dc);
-  DECLARE_EVENT_TABLE()
+// Data stored per platform window
+struct WGL_WindowData {
+  HDC hDC;
 };
 
-class EQFrame : public wxFrame {
- public:
-  EQFrame();
-  RefreshThread* pThread;
-  wxCriticalSection pThreadCS;
-  void RefreshScreen();
+// Data
+static HGLRC g_hRC;
+static WGL_WindowData g_MainWindow;
+static int g_Width;
+static int g_Height;
 
- private:
-  void OnEnable(wxCommandEvent& event);
-  void OnChangeOut(wxCommandEvent& event);
-  void OnChangeIn(wxCommandEvent& event);
-  void OnChangeGain(wxCommandEvent& event);
-  SpecDrawPane* specplot;
-};
-
-class RefreshThread : public wxThread {
- public:
-  RefreshThread(EQFrame* handler) : wxThread() { pHandler = handler; }
-  ~RefreshThread();
-
- private:
-  virtual ExitCode Entry();
-  EQFrame* pHandler;
-};
-
-enum { ID_Enable = 1, ID_In = 2, ID_Out = 3 };
-
-class EQApp : public wxApp {
- public:
-  virtual bool OnInit();
-  EQControls* GetControls() { return cntrls; }
-  EQFrame* GetEQFrame() { return frame; }
-
- private:
-  EQControls* cntrls;
-  EQFrame* frame;
-};
-
-wxDECLARE_APP(EQApp);
-}  // namespace EQ
+// IMGUI helper functions
+bool CreateDeviceWGL(HWND hWnd, WGL_WindowData* data);
+void CleanupDeviceWGL(HWND hWnd, WGL_WindowData* data);
+void ResetDeviceWGL();
+LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd,
+                                                             UINT msg,
+                                                             WPARAM wParam,
+                                                             LPARAM lParam);
+void drawDeviceChoice();
 #endif
